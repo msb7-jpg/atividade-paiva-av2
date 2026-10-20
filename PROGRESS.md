@@ -32,12 +32,14 @@
 - [X] Documentar protocolo estatístico pareado ($N=30$) e explicabilidade (XAI) em `docs/especificacao-metodologica.md`.
 - **Commit:** `feat(design): specify formal comparative study protocol and hypotheses`
 
-### [ ] Etapa 4: Implementação do Pipeline Experimental (Python / PyTorch)
-- [ ] Implementar `src/experiment.py` com seeds 1001-1030 e pareamento de lotes.
-- [ ] Implementar cálculo de Teste t pareado bilateral, IC 95% e F1-macro.
-- [ ] Gerar gráficos (Boxplot e XAI) para o artigo.
-- [ ] Criar notebook `notebooks/experimento_av2.ipynb` para Colab.
-- **Commit Previsto:** `feat(code): implement paired 30-seed simulation pipeline and statistical test`
+### [X] Etapa 4: Implementação do Pipeline Experimental (Python / PyTorch / uv)
+- [X] Implementar arquitetura limpa em `src/` (Domínio, Serviços, Visualização, CLI).
+- [X] Gerenciar ambiente com `uv` e `pyproject.toml` (Python 3.12+).
+- [X] Implementar simulação determinística pareada de 30 seeds (`seeds 1001-1030`).
+- [X] Implementar cálculo formal de teste t pareado bilateral, IC 95% e métricas de decisão ($H_0$).
+- [X] Criar script executável direto `scripts/run_simulation.sh`.
+- [X] Gerar gráficos automáticos de alta resolução em `results/boxplot_comparativo.png`.
+- **Commit:** `feat(pipeline): implement clean architecture simulation pipeline and direct runner script`
 
 ### [ ] Etapa 5: Redação do Artigo Científico em Padrão IEEE (2 Colunas)
 - [ ] Redigir `paper/artigo.md` com pelo menos uma citação seminal por parágrafo.
