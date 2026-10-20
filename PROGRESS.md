@@ -26,11 +26,11 @@
 - [X] Validar compilação com artigo de teste preliminar gerando PDF em 2 colunas (`paper/artigo.pdf`).
 - **Commit:** `build(latex): create pandoc IEEEtran template and verified bibtex base`
 
-### [ ] Etapa 3: Especificação Metodológica do Estudo
-- [ ] Formalizar hipóteses científicas ($H_0$ e $H_1$).
-- [ ] Definir Técnicas A (ViT/CLIP Features), B (Dropout + L2) e C vs C_alt.
-- [ ] Documentar protocolo estatístico pareado ($N=30$) e explicabilidade (XAI).
-- **Commit Previsto:** `feat(design): specify formal comparative study protocol and hypotheses`
+### [X] Etapa 3: Especificação Metodológica do Estudo
+- [X] Formalizar hipóteses científicas ($H_0$ e $H_1$).
+- [X] Definir Técnicas A (ViT/CLIP Features), B (Dropout + L2) e C vs C_alt.
+- [X] Documentar protocolo estatístico pareado ($N=30$) e explicabilidade (XAI) em `docs/especificacao-metodologica.md`.
+- **Commit:** `feat(design): specify formal comparative study protocol and hypotheses`
 
 ### [ ] Etapa 4: Implementação do Pipeline Experimental (Python / PyTorch)
 - [ ] Implementar `src/experiment.py` com seeds 1001-1030 e pareamento de lotes.
