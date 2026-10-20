@@ -9,7 +9,7 @@ cd "$ROOT_DIR"
 INPUT_MD="${1:-paper/artigo.md}"
 OUTPUT_PDF="${2:-paper/artigo.pdf}"
 
-echo "==> Compilando Artigo IEEE..."
+echo "==> Compilando Artigo IEEE com CSL oficial..."
 echo "Entrada: $INPUT_MD"
 echo "Saída:   $OUTPUT_PDF"
 
@@ -17,7 +17,16 @@ pandoc "$INPUT_MD" \
   --template=latex/template-ieee.tex \
   --pdf-engine=pdflatex \
   --citeproc \
+  --csl=latex/ieee.csl \
   --bibliography=latex/referencias.bib \
   -o "$OUTPUT_PDF"
 
 echo "==> Sucesso! PDF gerado em: $OUTPUT_PDF"
+
+# Renderização automática de páginas para inspeção visual
+echo "==> Gerando imagens PNG das páginas do artigo para inspeção visual..."
+mkdir -p paper/pages
+rm -f paper/pages/page-*.png
+pdftoppm -png -r 150 "$OUTPUT_PDF" paper/pages/page
+echo "==> Imagens geradas em paper/pages/:"
+ls -lh paper/pages/page-*.png

@@ -21,20 +21,24 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
-% definitions for citeproc citations
+% Definitions for citeproc citations
 \NewDocumentCommand\citeproctext{}{}
 \NewDocumentCommand\citeproc{mm}{%
   \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
 \makeatletter
- % allow citations to break across lines
  \let\@cite@ofmt\@firstofone
 \makeatother
 
-% Pandoc CSL macros for references
+% Pandoc CSL macros for references (IEEE Style)
+% Suppress the outer default bibitem label since CSLLeftMargin already prints [1]
+\makeatletter
+\def\@biblabel#1{}
+\makeatother
+
 \newlength{\cslhangindent}
 \setlength{\cslhangindent}{1.5em}
 \newlength{\csllabelwidth}
-\setlength{\csllabelwidth}{2.5em}
+\setlength{\csllabelwidth}{1.8em}
 \newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
  {\begin{list}{}{%
   \setlength{\itemindent}{0pt}
@@ -46,21 +50,21 @@
   \fi
   \setlength{\itemsep}{#2\baselineskip}}}
  {\end{list}}
-\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\noindent\parbox[t]{\csllabelwidth}{\makebox[\csllabelwidth][l]{#1}}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\vspace{0.4ex}}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 $if(title)$
 \title{$title$}
 $endif$
 
-$if(author)$
-\author{$for(author)$\IEEEauthorblockN{$author.name$}
-\IEEEauthorblockA{\textit{$author.department$} \\
-\textit{$author.institution$} \\
-$author.email$}$sep$\and $endfor$}
-$endif$
+\author{
+  \IEEEauthorblockN{Miguel Batista, Rafaela Vidal, Beatriz Pereira, Manuela Cavalcanti, Rafael Barros}
+  \IEEEauthorblockA{\textit{Engenharia de Software / Inteligência Artificial} \\
+  \textit{CESAR School} -- Recife, PE, Brasil \\
+  \{msb2, rbv2, bcbsp, mca2, ralb\}@cesar.school}
+}
 
 \begin{document}
 
