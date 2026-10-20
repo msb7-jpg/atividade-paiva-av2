@@ -48,6 +48,7 @@
 - [X] Compilar com sucesso via `scripts/build_paper.sh`, gerando artigo IEEE em 2 colunas com 3 páginas (`paper/artigo.pdf`).
 - **Commit:** `docs(paper): write complete IEEE double-column paper with citations and compile PDF`
 
-### [ ] Etapa 6: Elaboração dos Slides da Apresentação
-- [ ] Redigir roteiro e estrutura dos slides em `slides/apresentacao.md`.
-- **Commit Previsto:** `docs(slides): create presentation structure and visual slides outline`
+### [X] Etapa 6: Elaboração dos Slides da Apresentação
+- [X] Redigir roteiro completo e estrutura visual dos slides em `slides/apresentacao.md`.
+- [X] Cobrir contextualização, metodologia ceteris paribus, formulação de hipóteses, tabela estatística, boxplots e XAI.
+- **Commit:** `docs(slides): create presentation structure and visual slides outline`
