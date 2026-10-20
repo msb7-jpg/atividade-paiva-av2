@@ -19,12 +19,12 @@
 - [X] Criar estrutura de diretórios do projeto (`docs/`, `latex/`, `paper/`, `notebooks/`, `src/`, `slides/`, `scripts/`).
 - **Commit:** `docs(setup): organize and sanitize project documentation in UTF-8`
 
-### [ ] Etapa 2: Template Pandoc IEEE e Base Bibliográfica (.bib)
-- [ ] Desenvolver template Pandoc `latex/template-ieee.tex` compatível com `IEEEtran.cls`.
-- [ ] Criar base BibTeX formal `latex/referencias.bib` com artigos seminais verificados.
-- [ ] Desenvolver script de compilação `scripts/build_paper.sh`.
-- [ ] Validar compilação com artigo de teste preliminar gerando PDF em 2 colunas.
-- **Commit Previsto:** `build(latex): create pandoc IEEEtran template and verified bibtex base`
+### [X] Etapa 2: Template Pandoc IEEE e Base Bibliográfica (.bib)
+- [X] Desenvolver template Pandoc `latex/template-ieee.tex` compatível com `IEEEtran.cls` e CSL/Citeproc.
+- [X] Criar base BibTeX formal `latex/referencias.bib` com artigos seminais verificados.
+- [X] Desenvolver script de compilação `scripts/build_paper.sh`.
+- [X] Validar compilação com artigo de teste preliminar gerando PDF em 2 colunas (`paper/artigo.pdf`).
+- **Commit:** `build(latex): create pandoc IEEEtran template and verified bibtex base`
 
 ### [ ] Etapa 3: Especificação Metodológica do Estudo
 - [ ] Formalizar hipóteses científicas ($H_0$ e $H_1$).
