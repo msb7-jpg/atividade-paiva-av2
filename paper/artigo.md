@@ -5,6 +5,22 @@ author:
     department: "Engenharia de Software / Inteligência Artificial"
     institution: "CESAR School"
     email: "msb2@cesar.school"
+  - name: "Rafaela Vidal"
+    department: "Inteligência Artificial"
+    institution: "CESAR School"
+    email: "rbv2@cesar.school"
+  - name: "Beatriz Pereira"
+    department: "Inteligência Artificial"
+    institution: "CESAR School"
+    email: "bcbsp@cesar.school"
+  - name: "Manuela Cavalcanti"
+    department: "Inteligência Artificial"
+    institution: "CESAR School"
+    email: "mca2@cesar.school"
+  - name: "Rafael Barros"
+    department: "Inteligência Artificial"
+    institution: "CESAR School"
+    email: "ralb@cesar.school"
 abstract: |
   A aplicação de modelos de fundação tem transformado o desenvolvimento de soluções em visão computacional através da transferência de aprendizado. Este trabalho investiga experimentalmente a hipótese de superioridade de representações pré-treinadas frente à inicialização aleatória sob condições metodológicas estritamente controladas (princípio ceteris paribus). Utilizando o conjunto de dados Beans, mantivemos invariantes a extração via Vision Transformer (ViT-B/32), mecanismos de regularização com Dropout (0.2) e decaimento de pesos L2, variando exclusivamente a inicialização dos pesos da rede. Conduzimos 30 simulações pareadas indexadas por sementes aleatórias fixas (seeds 1001 a 1030). A aplicação do teste t de Student pareado bilateral revelou um ganho médio de F1-Macro de +0.2861 (IC 95%: [0.2674, 0.3048], p < 1e-20), rejeitando categoricamente a hipótese nula em favor da eficácia comprovada da transferência multimodal.
 keywords:

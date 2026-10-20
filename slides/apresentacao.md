@@ -1,7 +1,12 @@
 # Roteiro da Apresentação - 2ª Avaliação: Inteligência Artificial
 **CESAR School - Outubro/2026**  
 **Docente:** Prof. Rodrigo Paiva  
-**Discente:** Miguel Batista (`msb2@cesar.school`)
+**Discentes:**  
+- Miguel Batista (`msb2@cesar.school`)  
+- Rafaela Vidal (`rbv2@cesar.school`)  
+- Beatriz Pereira (`bcbsp@cesar.school`)  
+- Manuela Cavalcanti (`mca2@cesar.school`)  
+- Rafael Barros (`ralb@cesar.school`)
 
 ---
 
