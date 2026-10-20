@@ -28,9 +28,7 @@ No tocante à prevenção do sobreajuste (*overfitting*) em cabeças de classifi
 
 # Metodologia Proposta
 
-A metodologia segue o preceito do teste controlado (*ablation study*), assegurando a premissa de *ceteris paribus*. O pipeline completo encontra-se ilustrado na Fig. 1 e subdivide-se nas três técnicas curriculares obrigatórias.
-
-![Diagrama em blocos do pipeline experimental controlado com isolamento estrito das Técnicas A, B e C.](results/fluxograma_metodologia.png){width=100%}
+A metodologia segue o preceito do teste controlado (*ablation study*), assegurando a premissa de *ceteris paribus* e subdividindo-se nas três técnicas curriculares obrigatórias.
 
 ## Seleção e Isolamento das Técnicas
 
@@ -75,11 +73,11 @@ A diferença média observada no índice F1-Macro foi de $+0{,}2861$, acompanhad
 
 ![Distribuição comparativa de F1-Macro e Acurácia obtida através das 30 simulações pareadas.](results/boxplot_comparativo.png){width=100%}
 
-A dispersão amostral exibida na Fig. 2 atesta a robustez do Cenário 1, cuja variância mostrou-se substancialmente mais contida do que a do Cenário 2, evidenciando que pesos pré-treinados conferem não apenas maior acurácia, mas também resiliência e estabilidade contra variações estocásticas de inicialização [@yosinski2014transferable].
+A dispersão amostral exibida na Fig. 1 atesta a robustez do Cenário 1, cuja variância mostrou-se substancialmente mais contida do que a do Cenário 2, evidenciando que pesos pré-treinados conferem não apenas maior acurácia, mas também resiliência e estabilidade contra variações estocásticas de inicialização [@yosinski2014transferable].
 
 # Explicabilidade Visual (XAI)
 
-Para auditar o comportamento qualitativo dos modelos, mapas de saliência baseados em ativação e atenção foram extraídos para amostras representativas das classes *Angular Leaf Spot*, *Bean Rust* e *Healthy*, conforme apresentado na Fig. 3 [@selvaraju2017gradcam]. Essa análise evidencia que as atenções no modelo com pesos pré-treinados convergem seletivamente para as áreas necrosadas e pústulas das folhas afetadas.
+Para auditar o comportamento qualitativo dos modelos, mapas de saliência baseados em ativação e atenção foram extraídos para amostras representativas das classes *Angular Leaf Spot*, *Bean Rust* e *Healthy*, conforme apresentado na Fig. 2 [@selvaraju2017gradcam]. Essa análise evidencia que as atenções no modelo com pesos pré-treinados convergem seletivamente para as áreas necrosadas e pústulas das folhas afetadas.
 
 ![Mapas de calor de explicabilidade (XAI) para três patologias foliares comparando o Cenário 1 (Transfer Learning) vs. Cenário 2 (Pesos Aleatórios).](results/explicabilidade_xai.png){width=100%}
 
