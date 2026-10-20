@@ -1,0 +1,8 @@
+.Zone.Identifier
+*.Zone.Identifier
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+node_modules/
+.venv/
+env/
