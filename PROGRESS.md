@@ -41,11 +41,12 @@
 - [X] Gerar gráficos automáticos de alta resolução em `results/boxplot_comparativo.png`.
 - **Commit:** `feat(pipeline): implement clean architecture simulation pipeline and direct runner script`
 
-### [ ] Etapa 5: Redação do Artigo Científico em Padrão IEEE (2 Colunas)
-- [ ] Redigir `paper/artigo.md` com pelo menos uma citação seminal por parágrafo.
-- [ ] Inserir tabelas formais e figuras de resultados.
-- [ ] Compilar PDF final via `scripts/build_paper.sh`.
-- **Commit Previsto:** `docs(paper): write complete IEEE double-column paper with citations and compile PDF`
+### [X] Etapa 5: Redação do Artigo Científico em Padrão IEEE (2 Colunas)
+- [X] Redigir `paper/artigo.md` com pelo menos uma citação seminal formal em cada parágrafo (NeurIPS, ICML, ICLR, CVPR, ICCV, JMLR).
+- [X] Inserir formulação matemática formal de hipóteses ($H_0$, $H_1$).
+- [X] Inserir tabela formal do Teste t pareado ($N=30$, gl=29) e figura do Boxplot em alta resolução.
+- [X] Compilar com sucesso via `scripts/build_paper.sh`, gerando artigo IEEE em 2 colunas com 3 páginas (`paper/artigo.pdf`).
+- **Commit:** `docs(paper): write complete IEEE double-column paper with citations and compile PDF`
 
 ### [ ] Etapa 6: Elaboração dos Slides da Apresentação
 - [ ] Redigir roteiro e estrutura dos slides em `slides/apresentacao.md`.
