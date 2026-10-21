@@ -38,32 +38,40 @@ def create_resnet50(pretrained: bool = True, seed: int = 1001) -> nn.Module:
 
 
 class LinearWarmupCosineAnnealingLR:
-    """Scheduler com Warmup Linear inicial seguido por decaimento de cosseno."""
+    """Scheduler com Warmup Linear inicial seguido por decaimento de cosseno, atualizado por batch.
+
+    Chamar step() após cada optimizer.step(). O lr já é ajustado na construção, de modo que o
+    primeiro batch usa base_lr / warmup_steps (e não base_lr). O último batch usa min_lr.
+    """
 
     def __init__(
         self,
         optimizer: optim.Optimizer,
-        warmup_epochs: int,
-        max_epochs: int,
+        warmup_steps: int,
+        total_steps: int,
         base_lr: float,
         min_lr: float = 1e-6,
     ) -> None:
         self.optimizer = optimizer
-        self.warmup_epochs = max(1, warmup_epochs)
-        self.max_epochs = max_epochs
+        self.warmup_steps = max(1, warmup_steps)
+        self.total_steps = total_steps
         self.base_lr = base_lr
         self.min_lr = min_lr
-        self.current_epoch = 0
+        self.current_step = 0
+        self._apply_lr()
+
+    def get_lr(self) -> float:
+        if self.current_step < self.warmup_steps:
+            return self.base_lr * (self.current_step + 1) / self.warmup_steps
+        cosine_steps = max(1, self.total_steps - self.warmup_steps - 1)
+        progress = min(1.0, (self.current_step - self.warmup_steps) / cosine_steps)
+        return self.min_lr + 0.5 * (self.base_lr - self.min_lr) * (1.0 + math.cos(math.pi * progress))
 
     def step(self) -> None:
-        self.current_epoch += 1
-        if self.current_epoch <= self.warmup_epochs:
-            lr = self.base_lr * (self.current_epoch / self.warmup_epochs)
-        else:
-            progress = (self.current_epoch - self.warmup_epochs) / max(
-                1, self.max_epochs - self.warmup_epochs
-            )
-            lr = self.min_lr + 0.5 * (self.base_lr - self.min_lr) * (1.0 + math.cos(math.pi * progress))
+        self.current_step += 1
+        self._apply_lr()
 
+    def _apply_lr(self) -> None:
+        lr = self.get_lr()
         for param_group in self.optimizer.param_groups:
             param_group["lr"] = lr

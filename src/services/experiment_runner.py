@@ -64,12 +64,14 @@ class ExperimentRunner:
             optimizer = optim.Adam(model.parameters(), lr=1e-4, weight_decay=1e-4)
             scheduler = None
         else:
-            # Scratch: treinamento a partir do zero com Warmup e Cosine Annealing
+            # Scratch: treinamento a partir do zero com Warmup (1 época) e Cosine Annealing,
+            # com o lr atualizado a cada batch
+            steps_per_epoch = len(train_loader)
             optimizer = optim.Adam(model.parameters(), lr=3e-4, weight_decay=1e-4)
             scheduler = LinearWarmupCosineAnnealingLR(
                 optimizer,
-                warmup_epochs=1,
-                max_epochs=self.epochs,
+                warmup_steps=1 * steps_per_epoch,
+                total_steps=self.epochs * steps_per_epoch,
                 base_lr=3e-4,
                 min_lr=1e-6,
             )
@@ -85,8 +87,8 @@ class ExperimentRunner:
                 loss = criterion(out, y)
                 loss.backward()
                 optimizer.step()
-            if scheduler:
-                scheduler.step()
+                if scheduler:
+                    scheduler.step()
 
         # Avaliação determinística no conjunto de teste independente
         model.eval()
