@@ -2,10 +2,19 @@ from pydantic import BaseModel, Field
 
 
 class EvaluationMetrics(BaseModel):
-    """Métricas de avaliação de uma simulação no conjunto de teste."""
+    """Métricas de avaliação detalhadas de uma simulação no conjunto de teste."""
 
-    f1_macro: float = Field(..., ge=0.0, le=1.0, description="F1-Score ponderado macro")
+    f1_macro: float = Field(..., ge=0.0, le=1.0, description="F1-Score macro")
     accuracy: float = Field(..., ge=0.0, le=1.0, description="Acurácia geral")
+    total_samples: int = Field(default=582, description="Total de radiografias de teste")
+    correct_count: int = Field(default=0, description="Total de imagens classificadas corretamente")
+    error_count: int = Field(default=0, description="Total de imagens classificadas incorretamente")
+    tp: int = Field(default=0, description="Verdadeiros Positivos (Pneumonia detectada)")
+    tn: int = Field(default=0, description="Verdadeiros Negativos (Sadio detectado)")
+    fp: int = Field(default=0, description="Falsos Positivos (Sadio confundido com Pneumonia)")
+    fn: int = Field(default=0, description="Falsos Negativos (Pneumonia não detectada)")
+    sensitivity: float = Field(default=0.0, ge=0.0, le=1.0, description="Sensibilidade / Recall de Pneumonia")
+    specificity: float = Field(default=0.0, ge=0.0, le=1.0, description="Especificidade / Recall de Sadio")
 
 
 class PairedSimulationResult(BaseModel):
@@ -17,7 +26,7 @@ class PairedSimulationResult(BaseModel):
 
     @property
     def f1_difference(self) -> float:
-        """Diferença pareada: Cenário 1 (Transfer Learning) - Cenário 2 (Pesos Aleatórios)."""
+        """Diferença pareada: Cenário 1 (Transfer Learning) - Cenário 2 (Scratch)."""
         return self.scenario_1.f1_macro - self.scenario_2.f1_macro
 
     @property

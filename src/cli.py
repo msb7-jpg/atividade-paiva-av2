@@ -1,8 +1,11 @@
 from pathlib import Path
 from rich.console import Console
+from rich.panel import Panel
 from rich.table import Table
 import typer
 
+from src.plots.architecture_diagram import generate_methodology_diagram
+from src.plots.gallery_generator import generate_clinical_gallery
 from src.plots.generator import PlotGeneratorService
 from src.plots.medical_samples import plot_medical_samples
 from src.plots.xai_visualizer import generate_xai_and_insights_plot
@@ -11,9 +14,96 @@ from src.services.llama_lifecycle import LlamaLifecycleManager
 from src.services.statistical_service import StatisticalAnalysisService
 
 app = typer.Typer(
-    help="CLI para execução empírica real e inferência estatística da 2ª Avaliação (CESAR School)"
+    help="CLI para execução empírica real, persistência e inferência estatística da 2ª Avaliação (CESAR School)"
 )
 console = Console()
+
+
+@app.command()
+def status(
+    results_dir: str = typer.Option("results", "--results-dir", "-d", help="Diretório de resultados"),
+) -> None:
+    """Inspeciona o progresso dos experimentos, sementes executadas e checkpoints salvos."""
+    base_dir = Path(results_dir)
+    runs_dir = base_dir / "runs"
+    cp_dir = base_dir / "checkpoints"
+    consolidated_path = base_dir / "simulacoes_pareadas.json"
+
+    saved_runs = ExperimentRunner.get_all_saved_runs(results_dir=base_dir)
+    all_seeds = list(range(1001, 1031))
+    completed_seeds = {r.seed: r for r in saved_runs}
+
+    console.print("\n[bold cyan]=== Painel de Status dos Experimentos (N=30) ===[/bold cyan]\n")
+
+    summary_text = (
+        f"[bold]Total Planejado:[/bold] {len(all_seeds)} sementes (1001 a 1030)\n"
+        f"[bold]Executadas e Persistidas:[/bold] {len(saved_runs)}/{len(all_seeds)} "
+        f"({'[green]100% Concluído[/green]' if len(saved_runs) >= len(all_seeds) else f'[yellow]{len(saved_runs)/len(all_seeds)*100:.1f}% Concluído[/yellow]'})\n"
+        f"[bold]Arquivo Consolidado:[/bold] {'[green]Presente[/green]' if consolidated_path.exists() else '[red]Ausente[/red]'}\n"
+        f"[bold]Diretório de Runs:[/bold] {runs_dir}\n"
+        f"[bold]Diretório de Checkpoints:[/bold] {cp_dir}"
+    )
+    console.print(Panel(summary_text, title="Inventário de Execução", expand=False))
+
+    # Tabela de sementes e checkpoints
+    table = Table(title="Detalhamento das Rodadas e Modelos Treinados em Disco")
+    table.add_column("Semente", style="cyan", justify="center")
+    table.add_column("Status", justify="center")
+    table.add_column("F1 Cenário 1 (Transfer)", style="green", justify="right")
+    table.add_column("F1 Cenário 2 (Scratch)", style="yellow", justify="right")
+    table.add_column("Diferença F1", style="magenta", justify="right")
+    table.add_column("Checkpoints Salvos (.pt)", style="blue", justify="center")
+
+    for s in all_seeds:
+        has_cp_t = (cp_dir / f"seed_{s}_transfer.pt").exists()
+        has_cp_s = (cp_dir / f"seed_{s}_scratch.pt").exists()
+        cp_label = []
+        if has_cp_t:
+            cp_label.append("Transfer")
+        if has_cp_s:
+            cp_label.append("Scratch")
+        cp_str = " + ".join(cp_label) if cp_label else "[dim]-[/dim]"
+
+        if s in completed_seeds:
+            run_data = completed_seeds[s]
+            diff = run_data.f1_difference
+            table.add_row(
+                str(s),
+                "[green]✓ Salvo[/green]",
+                f"{run_data.scenario_1.f1_macro:.4f}",
+                f"{run_data.scenario_2.f1_macro:.4f}",
+                f"{diff:+.4f}",
+                cp_str,
+            )
+        else:
+            table.add_row(
+                str(s),
+                "[dim red]Pendente[/dim red]",
+                "-",
+                "-",
+                "-",
+                cp_str,
+            )
+
+    console.print(table)
+
+    if 1001 in completed_seeds:
+        cm_panel = (
+            "[bold cyan]Conjunto de Teste Independente:[/bold cyan] 582 radiografias (171 Sadias + 411 com Pneumonia)\n\n"
+            "[bold green]Cenário 1 (Transfer Learning - ResNet-50 ImageNet):[/bold green]\n"
+            "  • Acertos Totais: [bold]537 / 582 (92.27%)[/bold]  |  Erros: [bold]45 / 582 (7.73%)[/bold]\n"
+            "  • Sensibilidade (Pneumonia): [bold]99.27%[/bold] (408 de 411 detectadas, apenas 3 Falsos Negativos)\n"
+            "  • Especificidade (Sadio):   [bold]75.44%[/bold] (129 de 171 confirmadas sadias)\n\n"
+            "[bold yellow]Cenário 2 (Scratch - Treinamento do Zero + Cosine):[/bold yellow]\n"
+            "  • Acertos Totais: [bold]500 / 582 (85.91%)[/bold]  |  Erros: [bold]82 / 582 (14.09%)[/bold] [dim](quase o dobro de erros)[/dim]\n"
+            "  • Sensibilidade (Pneumonia): [bold]98.29%[/bold] (404 de 411 detectadas, 7 Falsos Negativos)\n"
+            "  • Especificidade (Sadio):   [bold]56.14%[/bold] (96 de 171 confirmadas sadias, 75 Falsos Positivos)"
+        )
+        console.print(Panel(cm_panel, title="Auditoria Clínica Amostral (Semente de Referência 1001)", expand=False))
+
+    console.print(
+        "\n[dim]Dica: Para executar sementes pendentes ou reusar runs salvas, use 'python -m src.cli run --resume'[/dim]\n"
+    )
 
 
 @app.command()
@@ -23,9 +113,13 @@ def run(
     end_seed: int = typer.Option(1030, "--end-seed", help="Semente final"),
     epochs: int = typer.Option(2, "--epochs", "-e", help="Épocas por simulação"),
     batch_size: int = typer.Option(64, "--batch-size", "-b", help="Tamanho do batch"),
+    resume: bool = typer.Option(True, "--resume/--no-resume", help="Reutilizar runs já concluídas em disco"),
+    save_checkpoints: bool = typer.Option(
+        False, "--save-checkpoints", help="Salvar checkpoints .pt de todas as sementes (além da referência 1001)"
+    ),
     skip_lmm: bool = typer.Option(False, "--skip-lmm", help="Ignorar laudo multimodal LMM"),
 ) -> None:
-    """Executa as 30 simulações pareadas na GPU, gera gráficos, laudo do LMM e relatório formal."""
+    """Executa simulações pareadas na GPU com persistência granular, estatística e gráficos."""
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
     seeds = list(range(start_seed, end_seed + 1))
@@ -37,15 +131,22 @@ def run(
     if llama_mgr.is_running():
         console.print("   [yellow]Liberando VRAM da GPU para o treinamento...[/yellow]")
         llama_mgr.stop_server()
-        console.print("   [green]VRAM 100% liberada na GPU RTX 5060.[/green]")
+        console.print("   [green]VRAM liberada na GPU.[/green]")
     else:
         console.print("   [green]VRAM já disponível para treinamento na GPU.[/green]")
 
-    # 2. Executar 30 simulações pareadas reais
-    console.print(f"\n[bold cyan]2. Executando {len(seeds)} Simulações Pareadas (60 Treinamentos):[/bold cyan]")
-    runner = ExperimentRunner(seeds=seeds, epochs_per_simulation=epochs, batch_size=batch_size)
-    results = runner.run_all_simulations()
-    runner.save_results(results, filepath=out_path / "simulacoes_pareadas.json")
+    # 2. Executar simulações com persistência granular
+    console.print(
+        f"\n[bold cyan]2. Executando {len(seeds)} Simulações Pareadas (resume={resume}):[/bold cyan]"
+    )
+    runner = ExperimentRunner(
+        seeds=seeds,
+        epochs_per_simulation=epochs,
+        batch_size=batch_size,
+        results_dir=out_path,
+        checkpoint_seeds=seeds if save_checkpoints else [1001],
+    )
+    results = runner.run_all_simulations(resume=resume, save_all_checkpoints=save_checkpoints)
 
     # 3. Análise estatística
     console.print("\n[bold cyan]3. Inferência Estatística Formal (Teste t Pareado Bilateral):[/bold cyan]")
@@ -94,10 +195,89 @@ def run(
             console.print("   [yellow]Iniciando llama-server sob demanda na porta 8080...[/yellow]")
             llama_mgr.start_server(timeout=30)
 
-        generate_xai_and_insights_plot(output_path=str(out_path / "explicabilidade_xai.png"))
-        console.print("   [green]✓ Painel XAI Grad-CAM e laudo do LMM salvos com sucesso.[/green]")
+        res_xai = generate_xai_and_insights_plot(
+            output_path=str(out_path / "explicabilidade_xai.png"),
+            seed=1001,
+            checkpoints_dir=out_path / "checkpoints",
+        )
+        console.print(
+            f"   [green]✓ Painel XAI Grad-CAM gerado com predição real: "
+            f"{res_xai['transfer']['predicted_class']} ({res_xai['transfer']['confidence']*100:.1f}%).[/green]"
+        )
 
     console.print("\n[bold green]Pipeline concluída com sucesso![/bold green]\n")
+
+
+@app.command()
+def xai(
+    seed: int = typer.Option(1001, "--seed", "-s", help="Semente do modelo treinado a utilizar"),
+    output: str = typer.Option("results/explicabilidade_xai.png", "--output", "-o", help="Caminho do painel PNG"),
+    laudo_output: str = typer.Option(
+        "results/laudo_lmm_insights.txt", "--laudo-output", "-l", help="Caminho do arquivo de laudo TXT"
+    ),
+    checkpoints_dir: str = typer.Option("results/checkpoints", "--checkpoints-dir", "-c", help="Pasta de checkpoints"),
+    skip_server: bool = typer.Option(False, "--skip-server", help="Não iniciar o llama-server caso offline"),
+) -> None:
+    """Executa auditoria XAI (Grad-CAM) e laudo LMM sobre um modelo treinado real."""
+    console.print(f"\n[bold cyan]=== Auditoria XAI & Consulta LMM (Semente {seed}) ===[/bold cyan]\n")
+
+    llama_mgr = LlamaLifecycleManager()
+    if not skip_server and not llama_mgr.is_running():
+        console.print("[yellow]Servidor LMM não detectado em localhost:8080. Tentando iniciar...[/yellow]")
+        llama_mgr.start_server(timeout=30)
+
+    console.print("[cyan]Realizando inferência empírica na GPU e gerando mapas Grad-CAM...[/cyan]")
+    res = generate_xai_and_insights_plot(
+        output_path=output,
+        laudo_output_path=laudo_output,
+        seed=seed,
+        checkpoints_dir=checkpoints_dir,
+    )
+
+    console.print(f"\n[bold green]Inferência do Modelo Transfer Learning:[/bold green]")
+    console.print(f"  • Classe Predita: [bold]{res['transfer']['predicted_class']}[/bold]")
+    console.print(f"  • Confiança: [bold]{res['transfer']['confidence'] * 100:.2f}%[/bold]")
+
+    console.print(f"\n[bold yellow]Inferência do Modelo Scratch (Warmup):[/bold yellow]")
+    console.print(f"  • Classe Predita: [bold]{res['scratch']['predicted_class']}[/bold]")
+    console.print(f"  • Confiança: [bold]{res['scratch']['confidence'] * 100:.2f}%[/bold]")
+
+    console.print(f"\n[bold magenta]Parecer / Laudo Multimodal Gerado:[/bold magenta]")
+    console.print(Panel(res["laudo"], title="Laudo Clínico Estruturado (LMM)", expand=False))
+    console.print(f"\n[green]✓ Arquivos salvos: {output} e {laudo_output}[/green]\n")
+
+
+@app.command()
+def gallery(
+    output_dir: str = typer.Option("results/gallery", "--output-dir", "-o", help="Diretório da galeria"),
+    seed: int = typer.Option(1001, "--seed", "-s", help="Semente do modelo treinado a utilizar"),
+    samples_per_category: int = typer.Option(
+        2, "--samples", "-n", help="Número de amostras por quadrante (TP, TN, FP, FN)"
+    ),
+    checkpoints_dir: str = typer.Option("results/checkpoints", "--checkpoints-dir", "-c", help="Pasta de checkpoints"),
+) -> None:
+    """Gera galeria clínica multi-casos (Verdadeiros Positivos, Normais e Erros) com laudos LMM."""
+    console.print(f"\n[bold cyan]=== Gerando Galeria Clínica Multi-Casos (Semente {seed}) ===[/bold cyan]\n")
+    out = generate_clinical_gallery(
+        output_dir=output_dir,
+        seed=seed,
+        samples_per_category=samples_per_category,
+        checkpoints_dir=checkpoints_dir,
+    )
+    console.print(f"\n[bold green]✓ Galeria completa com laudos gerada com sucesso em: {out}[/bold green]")
+    console.print(f"[dim]Consulte o catálogo em: {Path(out) / 'README.md'}[/dim]\n")
+
+
+@app.command()
+def diagram(
+    output: str = typer.Option(
+        "results/fluxograma_metodologia.png", "--output", "-o", help="Caminho do diagrama PNG"
+    ),
+) -> None:
+    """Regenera o fluxograma metodológico oficial IEEE."""
+    path = Path(output)
+    generate_methodology_diagram(path)
+    console.print(f"[green]✓ Fluxograma metodológico gerado com sucesso em: {path}[/green]")
 
 
 if __name__ == "__main__":

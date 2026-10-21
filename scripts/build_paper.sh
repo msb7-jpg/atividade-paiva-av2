@@ -6,6 +6,8 @@ ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 
 cd "$ROOT_DIR"
 
+export TEXINPUTS="latex//:$TEXINPUTS"
+
 INPUT_MD="${1:-paper/artigo.md}"
 OUTPUT_PDF="${2:-paper/artigo.pdf}"
 

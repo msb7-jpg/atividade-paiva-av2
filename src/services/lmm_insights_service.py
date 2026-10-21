@@ -76,7 +76,8 @@ class LMMInsightsService:
         }
 
         try:
-            with httpx.Client(timeout=self.timeout) as client:
+            client_timeout = httpx.Timeout(self.timeout, connect=3.0)
+            with httpx.Client(timeout=client_timeout) as client:
                 response = client.post(self.chat_url, json=payload)
                 response.raise_for_status()
                 data = response.json()

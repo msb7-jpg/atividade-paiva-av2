@@ -1,0 +1,10 @@
+AUDITORIA CLÍNICA - CASO #01 [Verdadeiro Positivo (Pneumonia Confirmada)]
+Arquivo Original: person1338_bacteria_3395_jpeg.rf.e4972555b211701ddcbd5d4937c56159.jpg
+Diagnóstico Real: PNEUMONIA
+Predição Transfer Learning: PNEUMONIA (99.99%)
+Predição Scratch (Warmup):   PNEUMONIA (99.99%)
+======================================================================
+
+1. Análise Anatômica: O mapa de calor Grad-CAM converge para as bases e terço inferior dos pulmões.
+2. Coerência Clínica: O padrão de ativação coincide com áreas de aumento de densidade compatíveis com PNEUMONIA.
+3. Síntese do Laudo: Decisão com foco em estruturas intra-pulmonares, sem dependência de artefatos de fundo.

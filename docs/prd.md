@@ -1,180 +1,58 @@
-Aqui está o mapeamento completo e estruturado da solução, seguindo rigorosamente o enunciado da 2ª Avaliação, o exemplo de metodologia aprovado na TV e o conteúdo dos slides da disciplina.
+# Documento de Requisitos de Produto (PRD) — Avaliação 2 (Visão Computacional)
+
+## 1. Contexto e Requisitos Inegociáveis do Professor
+
+1. **Princípio do Isolamento de Variável (*Ceteris Paribus*):**
+   * Manter estritamente fixas as **Técnicas A** e **B**.
+   * Variar única e exclusivamente a **Técnica C** (Cenário 1: Proposto) versus **Técnica C Alternativa** (Cenário 2: Contrafactual).
+2. **Amostragem Pareada ($N = 30$):**
+   * Rodar exatamente 30 pares de experimentos ($60$ treinamentos completos).
+   * Conjunto fixo de sementes determinísticas: $\mathcal{S} = \{1001, 1002, \dots, 1030\}$.
+   * Em cada semente $s_i$, o sorteio de lotes e o data augmentation estocástico são idênticos para ambos os cenários.
+   * O conjunto de teste (582 imagens) permanece estritamente imutável em todas as 60 rodadas.
+3. **Inferência Estatística Formal:**
+   * Teste $t$ de Student pareado bilateral ($\alpha = 0{,}05$).
+   * $H_0: \mu_1 - \mu_2 = 0$ versus $H_1: \mu_1 - \mu_2 \neq 0$.
+4. **Entregáveis:**
+   * Código modular limpo e reprodutível via CLI (`src/cli.py`).
+   * Artigo científico no padrão IEEE de 2 colunas com 4 páginas (`paper/artigo.pdf`).
+   * Apresentação estruturada de slides (`slides/apresentacao.md`).
+   * Painéis de explicabilidade visual Grad-CAM e laudos estruturados via LMM local (`results/gallery/`).
 
 ---
 
-## 1. Análise do Objetivo e do Problema
+## 2. Escolha Metodológica e Mapeamento das Técnicas
 
-O objetivo da avaliação não é apenas criar um modelo que funcione bem, mas realizar um **experimento científico controlado** para provar estatisticamente que uma escolha técnica específica é superior a outra.
+### Caso de Uso Clínico:
+* **Dataset:** *Chest X-Ray Dataset* (Kermany et al., 2018).
+* **Treinamento:** 4.077 radiografias (1.104 normais e 2.973 pneumonia).
+* **Teste Imutável:** 582 radiografias (171 normais e 411 pneumonia).
+* **Total:** 4.659 radiografias clínicas reais de tórax pediátrico.
 
-### O que precisamos fazer exatamente (Requisitos do Enunciado):
+### Mapeamento das Técnicas:
 
-1. **Definir um Caso de Uso (Problema):** Escolher uma tarefa de visão computacional com um conjunto de dados real (ex.: classificar imagens de folhas de plantas ou objetos em 3 classes).
-
-
-2. **Isolar 3 Técnicas da Disciplina:** Selecionar três métodos ensinados nas aulas para compor o pipeline do modelo.
-
-
-3. **Montar 2 Cenários (Controle vs. Experimental):** Manter a Técnica A e a Técnica B fixas em ambos os lados, e alterar apenas a Técnica C:
-
-
-* **Cenário 1 (Principal):** Técnica A + Técnica B + **Técnica C**.
-
-
-* **Cenário 2 (Contrafactual / Alternativo):** Técnica A + Técnica B + **Técnica C (Alternativa)**.
-
-
-
-
-4. **Executar 30 Simulações Pareadas:** Rodar o treinamento/avaliação 30 vezes para cada cenário, variando a semente aleatória (*seeds* de 1001 a 1030), garantindo que em cada par $(i)$ ambos os modelos sejam avaliados sob as mesmas condições.
-
-
-5. **Inferência Estatística (Hipótese Nula vs. Alternativa):** Aplicar um **Teste $t$ pareado bilateral** sobre os 30 pares de resultados (F1-Macro e Acurácia) para calcular a diferença média, o intervalo de confiança de 95% e o $p$-valor:
-
-
-* **Hipótese Nula ($H_0$):** As duas abordagens têm eficácia igual (a diferença média de desempenho é zero).
-
-
-* **Hipótese Alternativa ($H_1$):** Uma das abordagens é estatisticamente mais eficaz que a outra ($p < 0.05$).
-
-
-
-
-6. **Gerar os 3 Entregáveis:** Código funcional + Apresentação de slides + Relatório em formato de artigo **IEEE de coluna dupla** contendo os gráficos comparativos.
-
-
+| Componente | Técnica Escolhida | Papel na Metodologia |
+| :--- | :--- | :--- |
+| **Técnica A (Fixa / Pré-processamento)** | **Data Augmentation Estocástico** | Redimensionamento para $224 \times 224$ px, espelhamento horizontal estocástico ($p=0.5$), rotação aleatória ($\pm 10^\circ$), jitter fotométrico e normalização ImageNet. Semente $s_i$ governa a geração estocástica. |
+| **Técnica B (Fixa / Explicabilidade & Auditoria)** | **ResNet-50 + Grad-CAM + LMM Local (Gemma 4)** | Arquitetura convolucional profunda com conexões residuais, extrator de mapas de ativação Grad-CAM na camada `layer4`, e auditoria diagnóstica clínica por LMM via interface OpenAI-compatible (`localhost:8080`). |
+| **Técnica C (Cenário 1 - Proposto)** | **Transfer Learning (Pesos ImageNet-1k)** | ResNet-50 inicializada com pesos convolucionais consolidados da ImageNet, otimizada com Adam ($\eta = 10^{-4}$, decaimento $L_2 = 10^{-4}$). |
+| **Técnica C Alternativa (Cenário 2 - Contrafactual)** | **Treinamento do Zero (Scratch + Warmup/Cosine)** | ResNet-50 inicializada pelo método He Normal (Kaiming), submetida a 1 época de *Linear Warmup* seguida por decaimento suave por cosseno (*Cosine Annealing*) com taxa de aprendizado variando de $3 \times 10^{-4}$ a $10^{-6}$. |
 
 ---
 
-## 2. Escolha Estratégica das Técnicas (Baseada nos Slides da Aula)
-
-Para que o código rode as 60 execuções (30 pares) em **menos de 2 minutos no Google Colab** e utilize exatamente o que o Prof. Rodrigo Paiva destacou nos slides, a melhor abordagem é usar **Foundation Models / CLIP com Transfer Learning**.
-
-### Caso de Uso Escolhido:
-
-* **Dataset:** *Beans Dataset* (o mesmo do slide da TV: 1.034 imagens de treino, 133 de validação e 128 de teste, divididas em 3 classes: *Mancha Angular*, *Ferrugem* e *Saudável*) - ou qualquer dataset de 3 classes do Hugging Face/Torchvision.
-
-
-
-### Mapeamento das 3 Técnicas e Como Elas Solucionam o Problema:
-
-| Componente | Técnica Escolhida | Onde está nos Slides | Papel na Solução do Problema |
-| --- | --- | --- | --- |
-| **Técnica A (Fixa)** | **Extração de Features com ViT / CLIP** (`clip-vit-base-patch32`) | Slide 2 (*Transformers / ViT*), Slide 8 (*ViT*), Slide 12 (*CLIP*) e Slide 29 (*Código Colab*).
-
- | Transforma cada imagem bruta (pixels) em um vetor numérico rico de 512 dimensões (*embedding*) usando pesos pré-treinados em 400 milhões de pares da web.
-
- |
-| **Técnica B (Fixa)** | **Prevenção a Overfitting com Dropout (0.2) + Regularização Ridge ($L_2$)** | Slide da TV (*Modelo e treinamento: Dropout 0.2 e Regularização Ridge L2*).
-
- | Na cabeça de classificação (camada densa final), desliga aleatoriamente 20% dos neurônios no treino e penaliza pesos altos, evitando que o modelo decore os dados de treino.
-
- |
-| **Técnica C (Cenário 1)** | **Fine-Tuning Supervisionado (Linear Probe + Cabeça Treinada com Adam)** | Slide 2 (*Transfer learning: congelar ou ajustar; linear probe*), Slide 13 e Slide 30 (*Siglário*).
-
- | Mantém o backbone congelado e treina uma cabeça classificadora (Pooling/Dropout + Camada Densa com Softmax de 3 saídas) usando os rótulos do dataset de treino.
-
- |
-| **Técnica C Alternativa (Cenário 2)** | **Classificação Zero-Shot Multimodal via Similaridade de Cosseno (ou Inicialização Aleatória)** | Slide 2 (*Few-shot / distância*), Slide 13 (*Zero-shot*) e Slide 29 (ou Slide da TV: *Pesos Aleatórios*).
-
- | **Opção C1 (Fiel à TV):** Treinar a mesma arquitetura mas com **pesos aleatórios** (sem pré-treino).
-
-<br>
-
-<br>**Opção C2 (Fiel ao PDF novo):** Classificar ou inicializar a cabeça comparando os vetores de texto das classes via similaridade de cosseno.
-
- |
-
-> **Recomendação prática de ouro:** Para ficar **100% blindado** tanto pelo slide da TV quanto pelo PDF do professor, usamos a estrutura idêntica à da TV trocando apenas o modelo antigo (MobileNetV2) pelo modelo da aula dele (**ViT - Vision Transformer**) ou mantendo a comparação de **Transfer Learning vs. Pesos Aleatórios** (ou **Linear Probe vs. Fine-Tuning**).
-> 
-> 
-
----
-
-## 3. Detalhamento da Arquitetura Comparativa (O que vai para o Slide e Relatório)
-
-Seguindo exatamente o fluxograma da foto da TV (`1000466654.jpg`), a sua metodologia fica desenhada assim:
-
-### Passo 1: Dados e Preparação (Técnica A)
-
-* **Conjunto de Dados:** *Beans Dataset* (3 classes balanceadas).
-
-
-* **Pré-processamento e Redimensionamento:** Redimensionamento das imagens para $224 \times 224$ pixels (padrão do ViT/ResNet) e normalização dos canais RGB, reduzindo o custo computacional.
-
-
-* **Data Augmentation no Treino:** Espelhamento horizontal aleatório e variação de brilho.
-
-
-
-### Passo 2: Divisão nos 2 Cenários (Técnica C vs. Técnica C Alternativa)
-
-* **Cenário 1 (Solução Principal - Com Transfer Learning):** Backbone pré-treinado no ImageNet/CLIP congelado (ou ajustado) extraindo representações visuais consolidadas.
-
-
-* **Cenário 2 (Solução Contrafactual - Sem Transfer Learning / Alternativa):** Mesma arquitetura, porém com **inicialização de pesos aleatórios** (ou sem ajuste fino), forçando a rede a aprender apenas com as ~1.000 imagens do dataset.
-
-
-
-### Passo 3: Cabeça Comum e Regularização (Técnica B)
-
-* Ambos os cenários passam pela mesma estrutura final:
-* **Dropout de $0.2$** + **Regularização $L_2$ (Weight Decay = $10^{-4}$)** para prevenção de overfitting.
-
-
-* Camada Densa final com **3 saídas e ativação Softmax** (uma probabilidade para cada classe).
-
-
-* Otimizador **Adam** (taxa de aprendizado $10^{-4}$) e lote (*batch size*) de 32 imagens.
-
-
-
-
-
----
-
-## 4. O Protocolo de Controle e Avaliação Estatística
-
-Para cumprir o requisito das **30 simulações e inferência de hipótese**:
-
-1. **Controle por Sementes (*Seeds* 1001 a 1030):**
-* Criamos um loop `for seed in range(1001, 1031):`.
-
-
-* Em cada `seed`, fixamos a aleatoriedade do PyTorch/NumPy (`torch.manual_seed(seed)`).
-* Treinamos o **Cenário 1** e avaliamos no conjunto de teste (128 imagens), salvando o **F1-Macro** e a **Acurácia**.
-
-
-* Treinamos o **Cenário 2** com a *mesma seed* e avaliamos no *mesmo conjunto de teste*, salvando o **F1-Macro** e a **Acurácia**.
-
-
-
-
-2. **Teste Estatístico (Teste $t$ Pareado Bilateral):**
-* Ao final das 60 execuções, teremos um vetor $X$ com 30 valores do Cenário 1 e um vetor $Y$ com 30 valores do Cenário 2.
-
-
-* Calculamos o vetor de diferenças pareadas $d_i = X_i - Y_i$ para $i = 1, \dots, 30$.
-
-
-* Aplicamos a estatística $t$:
-
-$$t = \frac{\bar{d}}{s_d / \sqrt{n}}$$
-
-
-
-onde $\bar{d}$ é a média das diferenças, $s_d$ é o desvio padrão das diferenças e $n = 30$.
-* Se o **$p$-valor for menor que $0.05$**, rejeitamos a **Hipótese Nula ($H_0$)** e concluímos que a **Hipótese Alternativa ($H_1$)** é verdadeira (o Cenário 1 é comprovadamente mais eficaz).
-
-
-
-
-3. **Explicabilidade Visual (XAI - Opcional de alto valor):**
-* Assim como no slide da TV (que usou Grad-CAM) e no Slide 2 e 10 do PDF (mapas de atenção/saliência), geramos o mapa visual em 3 imagens fixas de teste para mostrar onde o modelo pré-treinado foca (nas lesões da folha) versus onde o modelo alternativo foca (espalhado pelo fundo).
-
-
-
-
-
----
-
-Quer que eu já gere o **notebook completo em Python (pronto para colar no Colab)** com esse pipeline exato já gerando os gráficos e a tabela estatística para o relatório IEEE?
+## 3. Protocolo Experimental e Resultados Empíricos Reais
+
+### 1. Teste t de Student Pareado ($N=30$, gl=29):
+* **F1-Macro:** Diferença média $\bar{d} = +0{,}0997$, $s_d = 0{,}0542$, $t = 10{,}07$, $p = 5{,}63 \times 10^{-11}$, $\text{IC}_{95\%} = [0{,}0794, 0{,}1199]$.
+* **Acurácia:** Diferença média $\bar{d} = +0{,}0918$, $s_d = 0{,}0569$, $t = 8{,}83$, $p = 1{,}03 \times 10^{-09}$, $\text{IC}_{95\%} = [0{,}0705, 0{,}1130]$.
+* **Decisão Estatística:** Rejeição inequívoca de $H_0$ em favor de $H_1$.
+
+### 2. Decomposição Amostral e Matriz de Confusão (Semente 1001, $N_{teste}=582$):
+* **Cenário 1 (Transfer Learning):**
+  * Acertos: **537 de 582 imagens ($92{,}27\%$)** | Erros: **45 de 582 imagens ($7{,}73\%$)**
+  * Sensibilidade (Pneumonia): **$99{,}27\%$** ($408$ de $411$ detectadas, apenas 3 falsos negativos).
+  * Especificidade (Sadio): **$75{,}44\%$** ($129$ de $171$ confirmadas sadias).
+* **Cenário 2 (Scratch + Warmup):**
+  * Acertos: **500 de 582 imagens ($85{,}91\%$)** | Erros: **82 de 582 imagens ($14{,}09\%$)**
+  * Sensibilidade (Pneumonia): **$98{,}29\%$** ($404$ de $411$ detectadas, 7 falsos negativos).
+  * Especificidade (Sadio): **$56{,}14\%$** ($96$ de $171$ confirmadas sadias, 75 falsos positivos).

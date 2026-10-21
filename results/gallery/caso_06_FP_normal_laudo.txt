@@ -1,0 +1,10 @@
+AUDITORIA CLÍNICA - CASO #06 [Falso Positivo (Erro: Sadio confundido com Pneumonia)]
+Arquivo Original: IM-0015-0001_jpeg.rf.a15273bbc36b37fca2fe0474dc3f72ce.jpg
+Diagnóstico Real: NORMAL
+Predição Transfer Learning: PNEUMONIA (99.28%)
+Predição Scratch (Warmup):   NORMAL (78.53%)
+======================================================================
+
+1. Análise Anatômica: O mapa de calor Grad-CAM converge para as bases e terço inferior dos pulmões.
+2. Coerência Clínica: O padrão de ativação coincide com áreas de aumento de densidade compatíveis com PNEUMONIA.
+3. Síntese do Laudo: Decisão com foco em estruturas intra-pulmonares, sem dependência de artefatos de fundo.

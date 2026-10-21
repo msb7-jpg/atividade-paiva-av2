@@ -2,3 +2,15 @@ Rafaela Vidal - rbv2@cesar.school
 Beatriz Pereira - bcbsp@cesar.school
 Manuela Cavalcanti - mca2@cesar.school
 Rafael Barros - ralb@cesar.school
+
+
+    # 3. Consulta ao LMM Local (Gemma 4 em localhost:8080)
+
+    lmm_service = LMMInsightsService()
+    laudo = lmm_service.analyze_radiograph_and_heatmap(
+        raw_pneumonia, overlay_transfer, predicted_class="PNEUMONIA", confidence=0.965
+    )
+
+    ele ta deixando o resultado hard coded? tem algum outro lugar q tb esta deixando o resultado hard coded?
+
+    preciso entender, alem disso oq cada experimento gera?queria q cada experimento realmente tivesse uma saida persistente q ficasse salva e eu pudesse por rexemplo reutilizar uma run ou especificar, e ele veria quantos dos experimentos ja fossem rodados, pra por exemplo poder alterr a parte de IA e dps testar c algum experimento q ja tenha rodado    

@@ -1,0 +1,10 @@
+AUDITORIA CLÍNICA - CASO #08 [Falso Negativo (Erro Crítico: Pneumonia não detectada)]
+Arquivo Original: person1138_virus_1877_jpeg.rf.a46dec7d56ddd0fd1705b581dd01973a.jpg
+Diagnóstico Real: PNEUMONIA
+Predição Transfer Learning: NORMAL (89.51%)
+Predição Scratch (Warmup):   PNEUMONIA (84.94%)
+======================================================================
+
+1. Análise Anatômica: O mapa de calor Grad-CAM converge para as bases e terço inferior dos pulmões.
+2. Coerência Clínica: O padrão de ativação coincide com áreas de aumento de densidade compatíveis com NORMAL.
+3. Síntese do Laudo: Decisão com foco em estruturas intra-pulmonares, sem dependência de artefatos de fundo.

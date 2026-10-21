@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def generate_methodology_diagram(output_path: Path) -> Path:
     """Gera um fluxograma vertical em proporção de coluna IEEE com alta legibilidade."""
-    # Proporção ideal para 1 coluna IEEE: 3.5 polegadas de largura por 5.0 de altura
+    # Proporção ideal para 1 coluna IEEE: 3.5 polegadas de largura por 5.2 de altura
     fig, ax = plt.subplots(figsize=(3.5, 5.2), dpi=300)
     ax.axis("off")
 
@@ -45,13 +45,13 @@ def generate_methodology_diagram(output_path: Path) -> Path:
     ax.text(
         0.5,
         0.92,
-        "1. Conjunto de Dados: Beans (3 Classes)\n"
-        "• 1.034 Treino  ·  133 Validação  ·  128 Teste\n"
-        "• Imagens RGB (500×500 px)",
+        "1. Conjunto de Dados: Chest X-Ray (2 Classes)\n"
+        "• 4.077 Treino  ·  582 Teste Independente\n"
+        "• Radiografias de Tórax: Normal vs. Pneumonia",
         ha="center",
         va="center",
         bbox=style_neutral,
-        fontsize=9,
+        fontsize=8.5,
         linespacing=1.3,
     )
 
@@ -67,15 +67,15 @@ def generate_methodology_diagram(output_path: Path) -> Path:
     ax.text(
         0.5,
         0.72,
-        "Técnica A (Fixa / Controle):\n"
-        "Extração Visual com ViT-B/32 (CLIP)\n"
-        "• Redimensionamento para 224×224 px\n"
-        "• Normalização de canais & Patch Embedding\n"
-        "• Vetores densos de 512 dimensões",
+        "Técnica A (Fixa / Pré-processamento):\n"
+        "Data Augmentation Estocástico\n"
+        "• Resize (224×224 px) · Flip Horizontal (p=0.5)\n"
+        "• Rotação Estocástica (±10°) · Jitter Fotométrico\n"
+        "• Semente s_i fixa por simulação pareada",
         ha="center",
         va="center",
         bbox=style_neutral,
-        fontsize=9,
+        fontsize=8.5,
         linespacing=1.3,
     )
 
@@ -99,13 +99,13 @@ def generate_methodology_diagram(output_path: Path) -> Path:
         0.47,
         "Cenário 1 (Proposto)\n"
         "Transfer Learning\n"
-        "Pesos pré-treinados\n"
-        "multimodais do CLIP\n"
-        "(Linear Probe)",
+        "ResNet-50 ImageNet-1k\n"
+        "Otimizador Adam\n"
+        "(lr = 1e-4, L2 = 1e-4)",
         ha="center",
         va="center",
         bbox=style_c1,
-        fontsize=8.2,
+        fontsize=8.0,
         fontweight="bold",
         color="#1b4f72",
         linespacing=1.2,
@@ -114,15 +114,15 @@ def generate_methodology_diagram(output_path: Path) -> Path:
     ax.text(
         0.74,
         0.47,
-        "Cenário 2 (Alternativa)\n"
-        "Pesos Aleatórios\n"
-        "Inicialização do zero\n"
-        "(Scratch Gaussian)\n"
-        "sem pré-treino",
+        "Cenário 2 (Contrafactual)\n"
+        "Treinamento do Zero\n"
+        "He Normal (Kaiming)\n"
+        "Linear Warmup +\n"
+        "Cosine Annealing",
         ha="center",
         va="center",
         bbox=style_c2,
-        fontsize=8.2,
+        fontsize=8.0,
         fontweight="bold",
         color="#7d6608",
         linespacing=1.2,
@@ -142,19 +142,19 @@ def generate_methodology_diagram(output_path: Path) -> Path:
         arrowprops=dict(arrowstyle="-|>", lw=1.3, color="#7d6608", mutation_scale=11),
     )
 
-    # 4. Técnica B (Cabeça Comum)
+    # 4. Técnica B (Explicabilidade e Auditoria Multimodal)
     ax.text(
         0.5,
         0.28,
-        "Técnica B (Fixa / Regularização Comum):\n"
-        "Cabeça Densa de Classificação\n"
-        "• Dropout p = 0.20 (prevenção a sobreajuste)\n"
-        "• Decaimento L2 (Ridge, weight decay = 1e-4)\n"
-        "• Otimizador Adam (learning rate = 1e-4) · Softmax",
+        "Técnica B (Fixa / Explicabilidade & Auditoria):\n"
+        "Grad-CAM + LMM Local (Gemma 4)\n"
+        "• Grad-CAM na última camada convolucional (layer4)\n"
+        "• Extração de predição e confiança reais na GPU\n"
+        "• Auditoria de laudo clínico via LMM em localhost:8080",
         ha="center",
         va="center",
         bbox=style_neutral,
-        fontsize=8.8,
+        fontsize=8.3,
         linespacing=1.3,
     )
 
@@ -170,14 +170,14 @@ def generate_methodology_diagram(output_path: Path) -> Path:
     ax.text(
         0.5,
         0.09,
-        "Protocolo Estatístico Controlado (N = 30):\n"
+        "Protocolo Estatístico Pareado (N = 30):\n"
         "• 30 Sementes Idênticas Pareadas (1001 a 1030)\n"
-        "• Avaliação no mesmo conjunto de teste (128 amostras)\n"
+        "• Avaliação no mesmo conjunto de teste (582 imagens)\n"
         "• Teste t de Student pareado bilateral (α = 0,05)",
         ha="center",
         va="center",
         bbox=style_eval,
-        fontsize=8.8,
+        fontsize=8.5,
         fontweight="bold",
         color="#145a32",
         linespacing=1.3,
@@ -195,4 +195,4 @@ def generate_methodology_diagram(output_path: Path) -> Path:
 
 if __name__ == "__main__":
     generate_methodology_diagram(Path("results/fluxograma_metodologia.png"))
-    print("Fluxograma vertical redesenhado com sucesso em results/fluxograma_metodologia.png")
+    print("Fluxograma metodológico atualizado em results/fluxograma_metodologia.png")

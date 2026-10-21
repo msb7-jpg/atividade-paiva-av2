@@ -65,3 +65,28 @@
 - [X] Gerar gráficos em alta resolução: `results/amostras_clinicas_xray.png`, `results/boxplot_comparativo.png`, `results/explicabilidade_xai.png` e `results/laudo_lmm_insights.txt`.
 - [X] Atualizar artigo científico `paper/artigo.md` com a nova metodologia clínica, tabela estatística real e referências médicas no BibTeX.
 - [X] Validar compilação do PDF IEEE (`paper/artigo.pdf`).
+
+---
+
+### [X] Etapa 8: Persistência Granular de Experimentos, Eliminação de Hardcode e Desacoplamento XAI/LMM
+- [X] Diagnosticar e eliminar resultados hardcoded (`confidence=0.965`, classes fixadas) em `src/plots/xai_visualizer.py`.
+- [X] Implementar carregamento e inferência empírica real na GPU (`torch.softmax`, argmax e cálculo dinâmico de confiança nos modelos treinados).
+- [X] Implementar persistência granular imediata por semente (`results/runs/seed_{seed}.json`) e salvamento de checkpoints PyTorch (`results/checkpoints/seed_{seed}_*.pt`).
+- [X] Criar comando `status` na CLI para inspeção de sementes executadas, métricas salvas e checkpoints disponíveis.
+- [X] Atualizar comando `run` com suporte a `--resume` (evitando reprocessamento desnecessário) e salvamento de checkpoints.
+- [X] Criar comando dedicado `xai` na CLI para testes e ajustes rápidos no LMM / Grad-CAM sem necessidade de re-treinar a bateria de modelos.
+- [X] Atualizar o fluxograma metodológico oficial IEEE em `src/plots/architecture_diagram.py` refletindo a arquitetura ResNet-50 e dataset Chest X-Ray.
+- [X] Exportar `TEXINPUTS="latex//:$TEXINPUTS"` em `scripts/build_paper.sh` garantindo compilação robusta do PDF IEEE.
+
+---
+
+### [X] Etapa 9: Galeria Clínica Multi-Casos com Laudos e Sincronização Integral de Métricas
+- [X] Implementar o gerador de galeria clínica em `src/plots/gallery_generator.py` e o comando CLI `python -m src.cli gallery`.
+- [X] Mapear os 4 quadrantes diagnósticos do teste (Verdadeiros Positivos, Verdadeiros Negativos, Falsos Positivos e Falsos Negativos), gerando painéis visuais 300 DPI e laudos individuais em `results/gallery/`.
+- [X] Gerar catálogo estruturado `results/gallery/README.md` indexando casos, predições, confianças e laudos.
+- [X] Inserir a Tabela II (Matriz de Confusão e Contagem Amostral de Acertos/Erros: 537/582 vs 500/582, Sensibilidade 99,27% vs 98,29%, Especificidade 75,44% vs 56,14%) no artigo científico `paper/artigo.md`.
+- [X] Ajustar layout LaTeX para compilação exata de 4 páginas no padrão IEEE (`paper/artigo.pdf`).
+- [X] Sincronizar todas as especificações e documentações: `docs/prd.md`, `docs/especificacao-metodologica.md`, `AGENTS.md` e `slides/apresentacao.md` para refletir os números reais do Chest X-Ray.
+- [X] Criar o arquivo `README.md` principal do repositório com instruções completas e tabelas de resultados.
+
+

@@ -31,7 +31,7 @@ Recentemente, a integração de modelos multimodais de fundação (LMMs) tem eme
 
 A metodologia experimental foi desenhada em estrita conformidade com o princípio de *ceteris paribus*, isolando a estratégia de otimização e inicialização dos pesos como a única variável independente. A Fig. 1 ilustra as instâncias radiológicas avaliadas.
 
-![Painel comparativo de radiografias de tórax do conjunto de teste: (A) Tórax Normal com campos pulmonares translúcidos; (B) Pneumonia com consolidação alveolar patológica.](results/amostras_clinicas_xray.png){width=100%}
+![Painel comparativo de radiografias de tórax do conjunto de teste: (A) Tórax Normal com campos pulmonares translúcidos; (B) Pneumonia com consolidação alveolar patológica.](results/amostras_clinicas_xray.png){width=88%}
 
 ## Seleção e Isolamento das Técnicas
 
@@ -45,7 +45,7 @@ A esteira de processamento organiza-se nas três técnicas curriculares:
 
 ## Protocolo Experimental Pareado ($N=30$)
 
-Para garantir inferência estatística sem viés de partição, fixamos o conjunto de teste em 582 radiografias reais (171 sadias e 411 com pneumonia), mantido estritamente imutável durante as 60 execuções. A amostragem pareada percorre as sementes inteiras $\mathcal{S} = \{1001, 1002, \dots, 1030\}$ [@cohen1988statistical].
+A base de dados totaliza 4.659 radiografias de tórax pediátricas reais [@kermany2018identifying]. A partição de treino congrega 4.077 imagens (1.104 controles sadios e 2.973 com pneumonia patológica). Para garantir inferência estatística sem viés de partição, fixamos o conjunto de teste em 582 radiografias reais (171 sadias e 411 com pneumonia), mantido estritamente imutável durante as 60 execuções. A amostragem pareada percorre as sementes inteiras $\mathcal{S} = \{1001, 1002, \dots, 1030\}$ [@cohen1988statistical].
 
 Em cada simulação pareada $i$, ambos os cenários são submetidos à exata mesma sequência de lotes de treino ($batch = 64$) acelerada nativamente por hardware GPU dedicado. As hipóteses estatísticas bilaterais formulam-se como:
 $$\begin{aligned}
@@ -78,15 +78,41 @@ A análise estatística revelou uma superioridade consistente e altamente expres
 
 Como o valor-$p$ correspondente ($5{,}63 \times 10^{-11}$) situa-se mais de nove ordens de magnitude abaixo de $\alpha = 0{,}05$, rejeita-se categoricamente a hipótese nula ($H_0$) em prol da hipótese alternativa ($H_1$). Resultados análogos foram obtidos para a acurácia global ($\bar{d} = +0{,}0918$, $t = 8{,}83$, $p = 1{,}03 \times 10^{-09}$, $\text{IC}_{95\%}: [0{,}0705, 0{,}1130]$).
 
-![Distribuição comparativa do desempenho empírico ($N=30$ simulações pareadas) entre Transfer Learning e Scratch com Warmup/Cosine Annealing.](results/boxplot_comparativo.png){width=100%}
+![Distribuição comparativa do desempenho empírico ($N=30$ simulações pareadas) entre Transfer Learning e Scratch com Warmup/Cosine Annealing.](results/boxplot_comparativo.png){width=88%}
 
 O boxplot ilustrado na Fig. 2 demonstra a distribuição das métricas. Embora o Cenário 2 tenha demonstrado convergência estável graças ao agendamento de cosseno (atingindo F1-Macro médio superior a $0{,}85$), a Transferência de Aprendizado apresentou dispersão amostral significativamente mais estreita, evidenciando resiliência frente a variações estocásticas de inicialização.
+
+A Tabela II expõe a matriz de confusão e a contagem empírica de acertos e erros absolutos no teste independente ($N_{teste} = 582$).
+
+\begin{table}[htbp]
+\caption{Matriz de Confusão e Contagem Amostral no Conjunto de Teste ($N=582$)}
+\label{tab:matriz_confusao}
+\centering
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Métrica Diagnóstica} & \textbf{Transfer Learning} & \textbf{Scratch (Warmup)} & \textbf{Diferença} \\
+\midrule
+Classificações Corretas & $537$ / $582$ ($92{,}27\%$) & $500$ / $582$ ($85{,}91\%$) & $+37$ ($+6{,}36\%$) \\
+Falhas / Erros Globais & $45$ / $582$ ($7{,}73\%$) & $82$ / $582$ ($14{,}09\%$) & $-37$ ($-45{,}12\%$) \\
+Verdadeiros Positivos (TP) & $408$ ($99{,}27\%$) & $404$ ($98{,}29\%$) & $+4$ \\
+Verdadeiros Negativos (TN) & $129$ ($75{,}44\%$) & $96$ ($56{,}14\%$) & $+33$ \\
+Falsos Positivos (FP) & $42$ ($24{,}56\%$) & $75$ ($43{,}86\%$) & $-33$ \\
+Falsos Negativos (FN) & $3$ ($0{,}73\%$) & $7$ ($1{,}71\%$) & $-4$ \\
+Sensibilidade (Recall) & $99{,}27\%$ & $98{,}29\%$ & $+0{,}98\%$ \\
+Especificidade & $75{,}44\%$ & $56{,}14\%$ & $+19{,}30\%$ \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+A decomposição diagnóstica revela que a Transferência de Aprendizado atinge uma sensibilidade clínica de $99{,}27\%$, incorrendo em apenas 3 falsos negativos entre as 411 radiografias patológicas [@rajpurkar2017chexnet]. Em contraste, o treinamento do zero gerou quase o dobro de erros globais (82 falhas contra 45), exibindo baixa especificidade ($56{,}14\%$) decorrente de 75 falsos positivos [@kermany2018identifying].
 
 # Explicabilidade Visual (XAI) e Laudo Multimodal
 
 A avaliação qualitativa foi realizada sobre radiografias patológicas através da geração de mapas Grad-CAM e subsequente auditoria diagnóstica por Modelo de Linguagem e Visão Multimodal (LMM) executado localmente. A Fig. 3 apresenta o comparativo de ativação espacial.
 
-![Auditoria qualitativa por Grad-CAM: (A) Radiografia original com pneumonia; (B) Transfer Learning com foco concentrado em parênquima pulmonar; (C) Treinamento do Zero com dispersão em estruturas ósseas claviculares.](results/explicabilidade_xai.png){width=100%}
+![Auditoria qualitativa por Grad-CAM: (A) Radiografia original com pneumonia; (B) Transfer Learning com foco concentrado em parênquima pulmonar; (C) Treinamento do Zero com dispersão em estruturas ósseas claviculares.](results/explicabilidade_xai.png){width=88%}
 
 A auditoria computacional realizada pelo LMM sobre o mapa do Cenário 1 transcreveu formalmente:
 

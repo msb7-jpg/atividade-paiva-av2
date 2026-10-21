@@ -1,0 +1,11 @@
+{
+  "seed": 1015,
+  "scenario_1": {
+    "f1_macro": 0.965,
+    "accuracy": 0.9708
+  },
+  "scenario_2": {
+    "f1_macro": 0.8429,
+    "accuracy": 0.8557
+  }
+}

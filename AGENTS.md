@@ -41,23 +41,23 @@ Além dos arquivos Markdown, o material de aula do professor sobre Vision Transf
 
 1. **Princípio do Isolamento de Variável (*Ceteris Paribus*):**
    - Comparação estrita de $A + B + C$ versus $A + B + C_{alt}$.
-   - **Técnica A (Fixa / Controle):** Extração de features visuais com Vision Transformer (`ViT-B/32` / CLIP) gerando embeddings densos de 512 dimensões.
-   - **Técnica B (Fixa / Regularização Comum):** Cabeça densa com Dropout ($p=0.20$), regularização Ridge ($L_2$ weight decay = $10^{-4}$) e otimizador Adam ($\text{lr} = 10^{-4}$).
+   - **Técnica A (Fixa / Pré-processamento):** *Data Augmentation* estocástico ($224 \times 224$ px, Flip Horizontal $p=0.5$, Rotação $\pm 10^\circ$, Color Jitter).
+   - **Técnica B (Fixa / Arquitetura e Explicabilidade):** Arquitetura ResNet-50 com explicabilidade visual Grad-CAM (`layer4`) e auditoria diagnóstica por LMM multimodal local (Gemma 4 em `localhost:8080`).
    - **Técnica C (Variável Independente):**
-     - *Cenário 1 (Proposto):* Transfer Learning com pesos pré-treinados multimodais do CLIP (Linear Probe).
-     - *Cenário 2 (Alternativa / Controle Contrafactual):* Treinamento a partir do zero (*scratch*) com pesos aleatórios Gaussianos.
+     - *Cenário 1 (Proposto):* Transfer Learning com pesos pré-treinados ImageNet-1k, otimizador Adam ($\eta = 10^{-4}$, weight decay $L_2 = 10^{-4}$).
+     - *Cenário 2 (Alternativa / Controle Contrafactual):* Treinamento a partir do zero (*scratch*) com inicialização He Normal (Kaiming), submetido a 1 época de *Linear Warmup* seguida de decaimento suave por cosseno (*Cosine Annealing*) com taxa $\eta \in [10^{-6}, 3 \times 10^{-4}]$.
 2. **Amostragem Pareada com $N = 30$ Sementes:**
    - Amostragem com $30$ pares de execuções ($60$ treinamentos completos).
    - Conjunto fixo de sementes aleatórias: $\mathcal{S} = \{1001, 1002, \dots, 1030\}$.
    - O sorteio de lotes e transformações na iteração $i$ é idêntico para ambos os cenários sob a semente $s_i$.
-   - O conjunto de teste (128 amostras no Beans Dataset) é imutável em todas as 60 rodadas.
+   - A base é o **Chest X-Ray Dataset** (4.077 imagens de treino: 1.104 normais e 2.973 pneumonia; conjunto de teste com 582 imagens independentes: 171 normais e 411 pneumonia, imutável em todas as 60 rodadas).
 3. **Validação por Inferência Estatística Formal:**
    - Aplicação de Teste $t$ de Student pareado bilateral com $\alpha = 0{,}05$.
-   - Rejeição da Hipótese Nula ($H_0: \mu_1 - \mu_2 = 0$) em favor da Hipótese Alternativa ($H_1: \mu_1 - \mu_2 \neq 0$) caso $p < 0{,}05$.
+   - Rejeição da Hipótese Nula ($H_0: \mu_1 - \mu_2 = 0$) em favor da Hipótese Alternativa ($H_1: \mu_1 - \mu_2 \neq 0$) caso $p < 0{,}05$ (resultado empírico: $p = 5{,}63 \times 10^{-11}$).
 4. **Artigo Científico IEEE (Coluna Dupla):**
-   - Redigido em padrão IEEE de conferência (2 colunas).
+   - Redigido em padrão IEEE de conferência (2 colunas, 4 páginas).
    - **Regra Acadêmica Obrigatória:** Todo e qualquer parágrafo contém pelo menos uma citação formal de artigo seminal (NeurIPS, ICML, ICLR, CVPR, ICCV, JMLR).
-   - Estilo de referências estritamente numérico (`[1]`, `[2]`) com tipografia `\footnotesize` e seção `\section*{References}`.
+   - Estilo de referências estritamente numérico (`[1]`, `[2]`) com tipografia `\scriptsize` e seção `\section*{References}`.
 
 ---
 

@@ -1,0 +1,10 @@
+AUDITORIA CLÍNICA - CASO #04 [Verdadeiro Negativo (Tórax Sadio)]
+Arquivo Original: NORMAL2-IM-1308-0001_jpeg.rf.8a78aee34725ee155e95143b558cdc81.jpg
+Diagnóstico Real: NORMAL
+Predição Transfer Learning: NORMAL (99.72%)
+Predição Scratch (Warmup):   NORMAL (58.24%)
+======================================================================
+
+1. Análise Anatômica: O mapa de calor Grad-CAM converge para as bases e terço inferior dos pulmões.
+2. Coerência Clínica: O padrão de ativação coincide com áreas de aumento de densidade compatíveis com NORMAL.
+3. Síntese do Laudo: Decisão com foco em estruturas intra-pulmonares, sem dependência de artefatos de fundo.

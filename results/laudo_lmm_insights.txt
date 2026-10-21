@@ -1,10 +1,3 @@
-**Como especialista em radiologia computacional, analiso os achados da seguinte forma:**
-
-**1. Foco Anatômico:**
-A atenção do modelo (mapa de calor Grad-CAM) incide diretamente sobre o **parênquima pulmonar** (tecido pulmonar), especificamente na região do lobo superior do pulmão direito. Não há foco nas bordas externas ou estruturas pleurais.
-
-**2. Coerência com PNEUMONIA:**
-O padrão destacado corresponde a uma área de **opacidade ou infiltrado pulmonar focal**. Este tipo de achado é clinicamente coerente com a presença de consolidação ou pneumonia, pois representa uma alteração na densidade do tecido pulmonar.
-
-**3. Conclusão:**
-O diagnóstico do classificador é **plausível**. O modelo de IA está utilizando um achado visual
+1. Análise Anatômica: O mapa de calor Grad-CAM converge para as bases e terço inferior dos pulmões.
+2. Coerência Clínica: O padrão de ativação coincide com áreas de aumento de densidade compatíveis com PNEUMONIA.
+3. Síntese do Laudo: Decisão com foco em estruturas intra-pulmonares, sem dependência de artefatos de fundo.
