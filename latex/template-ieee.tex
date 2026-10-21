@@ -42,19 +42,11 @@
 \newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
  {\section*{References}%
   \footnotesize
-  \begin{list}{}{%
-  \setlength{\itemindent}{0pt}
-  \setlength{\leftmargin}{0pt}
-  \setlength{\parsep}{0pt}
-  \ifodd #1
-   \setlength{\leftmargin}{\cslhangindent}
-   \setlength{\itemindent}{-1\cslhangindent}
-  \fi
-  \setlength{\itemsep}{0.3ex}}}
- {\end{list}}
-\newcommand{\CSLBlock}[1]{#1\hfill\break}
-\newcommand{\CSLLeftMargin}[1]{\noindent\parbox[t]{\csllabelwidth}{\makebox[\csllabelwidth][l]{#1}}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\vspace{0.25ex}}
+  \parindent=0pt\relax}
+ {}
+\newcommand{\CSLBlock}[1]{#1\par\vspace{0.25ex}}
+\newcommand{\CSLLeftMargin}[1]{\noindent\makebox[\csllabelwidth][l]{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\par\vspace{0.25ex}}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 $if(title)$

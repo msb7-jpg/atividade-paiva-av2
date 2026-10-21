@@ -23,14 +23,14 @@ class PlotGeneratorService:
         for r in results:
             data_rows.append(
                 {
-                    "Cenário": "C1: Transfer",
+                    "Cenário": "Transfer Learning",
                     "F1-Macro": r.scenario_1.f1_macro,
                     "Acurácia": r.scenario_1.accuracy,
                 }
             )
             data_rows.append(
                 {
-                    "Cenário": "C2: Aleatório",
+                    "Cenário": "Scratch (Warmup)",
                     "F1-Macro": r.scenario_2.f1_macro,
                     "Acurácia": r.scenario_2.accuracy,
                 }

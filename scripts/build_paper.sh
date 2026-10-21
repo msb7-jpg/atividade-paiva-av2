@@ -27,6 +27,10 @@ echo "==> Sucesso! PDF gerado em: $OUTPUT_PDF"
 echo "==> Gerando imagens PNG das páginas do artigo para inspeção visual..."
 mkdir -p paper/pages
 rm -f paper/pages/page-*.png
-pdftoppm -png -r 150 "$OUTPUT_PDF" paper/pages/page
+if command -v pdftoppm >/dev/null 2>&1; then
+    pdftoppm -png -r 150 "$OUTPUT_PDF" paper/pages/page
+elif command -v gs >/dev/null 2>&1; then
+    gs -sDEVICE=png16m -dSAFER -dBATCH -dNOPAUSE -r150 -sOutputFile="paper/pages/page-%02d.png" "$OUTPUT_PDF" >/dev/null 2>&1
+fi
 echo "==> Imagens geradas em paper/pages/:"
 ls -lh paper/pages/page-*.png

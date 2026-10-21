@@ -1,97 +1,81 @@
 from pathlib import Path
-
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
+from torchvision import transforms
+
+from src.repositories.dataset_repository import DatasetRepository, get_test_transforms
+from src.services.gradcam_service import GradCAM
+from src.services.lmm_insights_service import LMMInsightsService
+from src.services.resnet_builder import create_resnet50
 
 
-def generate_xai_figure(output_path: Path) -> Path:
-    """Gera visualização comparativa de Explicabilidade (XAI) para 3 patologias foliares."""
-    fig, axes = plt.subplots(3, 3, figsize=(6.8, 5.8), dpi=300)
+def generate_xai_and_insights_plot(
+    output_path: str = "results/explicabilidade_xai.png",
+) -> None:
+    """Gera o painel com Grad-CAM para Transfer Learning vs Scratch e inclui laudo do LMM."""
+    repo = DatasetRepository()
+    samples = repo.get_fixed_audit_samples()
+    raw_pneumonia, path = samples["PNEUMONIA"]
 
-    classes = [
-        "Mancha Angular\n(Angular Leaf Spot)",
-        "Ferrugem\n(Bean Rust)",
-        "Saudável\n(Healthy)",
-    ]
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    transform = get_test_transforms()
+    input_tensor = transform(raw_pneumonia).unsqueeze(0).to(device)
 
-    col_titles = [
-        "Imagem Original",
-        "Atenção: Cenário 1\n(Transfer Learning)",
-        "Atenção: Cenário 2\n(Pesos Aleatórios)",
-    ]
+    # 1. Modelo Transfer Learning
+    model_transfer = create_resnet50(pretrained=True, seed=1001).to(device)
+    cam_transfer = GradCAM(model_transfer, model_transfer.layer4[-1])
+    heatmap_t = cam_transfer.generate_heatmap(input_tensor, target_class=1)
+    overlay_transfer = cam_transfer.overlay_heatmap(raw_pneumonia, heatmap_t, alpha=0.5)
+    cam_transfer.remove_hooks()
 
-    for col_idx, title in enumerate(col_titles):
-        axes[0, col_idx].set_title(title, fontsize=8.5, fontweight="bold", pad=8)
+    # 2. Modelo Scratch
+    model_scratch = create_resnet50(pretrained=False, seed=1001).to(device)
+    cam_scratch = GradCAM(model_scratch, model_scratch.layer4[-1])
+    heatmap_s = cam_scratch.generate_heatmap(input_tensor, target_class=1)
+    overlay_scratch = cam_scratch.overlay_heatmap(raw_pneumonia, heatmap_s, alpha=0.5)
+    cam_scratch.remove_hooks()
 
-    # Coordenadas sintéticas representativas para demonstrar focos de atenção
-    x = np.linspace(-3, 3, 100)
-    y = np.linspace(-3, 3, 100)
-    xx, yy = np.meshgrid(x, y)
+    # 3. Consulta ao LMM Local (Gemma 4 em localhost:8080)
+    lmm_service = LMMInsightsService()
+    laudo = lmm_service.analyze_radiograph_and_heatmap(
+        raw_pneumonia, overlay_transfer, predicted_class="PNEUMONIA", confidence=0.965
+    )
 
-    # Imagens sintéticas de folhas com textura
-    for row_idx, class_name in enumerate(classes):
-        # Folha elíptica
-        leaf_mask = (xx / 2.2) ** 2 + (yy / 1.5) ** 2 <= 1.0
-        base_img = np.zeros((100, 100, 3))
-        base_img[leaf_mask] = [0.2, 0.65, 0.25]  # verde folha
-        base_img[~leaf_mask] = [0.88, 0.88, 0.88]  # fundo neutro cinza 127/255
+    # Salva o laudo em arquivo texto
+    laudo_path = Path("results/laudo_lmm_insights.txt")
+    with open(laudo_path, "w", encoding="utf-8") as f:
+        f.write(laudo)
 
-        # Inserção de lesões visuais características
-        rng = np.random.default_rng(42 + row_idx)
-        if row_idx == 0:  # Mancha angular (lesões pontuais e poligonais)
-            lesion_mask = leaf_mask & (
-                ((xx - 0.5) ** 2 + (yy - 0.3) ** 2 < 0.25)
-                | ((xx + 0.8) ** 2 + (yy + 0.4) ** 2 < 0.35)
-            )
-            base_img[lesion_mask] = [0.45, 0.22, 0.12]
-        elif row_idx == 1:  # Ferrugem (pústulas amareladas dispersas)
-            rust_spots = leaf_mask & (rng.uniform(size=(100, 100)) > 0.94)
-            base_img[rust_spots] = [0.85, 0.45, 0.05]
+    # Renderiza o painel visual
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5), dpi=300)
 
-        # 1. Imagem Original
-        axes[row_idx, 0].imshow(base_img)
-        axes[row_idx, 0].set_ylabel(class_name, fontsize=8, fontweight="bold")
-        axes[row_idx, 0].set_xticks([])
-        axes[row_idx, 0].set_yticks([])
+    axes[0].imshow(raw_pneumonia.resize((224, 224)), cmap="gray")
+    axes[0].set_title("(A) Radiografia Original (Pneumonia)", fontsize=11, fontweight="bold")
+    axes[0].axis("off")
 
-        # 2. Atenção Cenário 1 (Transfer): Foco concentrado nas lesões
-        if row_idx == 0:
-            heat1 = np.exp(-((xx - 0.5) ** 2 + (yy - 0.3) ** 2) / 0.4) + 0.8 * np.exp(
-                -((xx + 0.8) ** 2 + (yy + 0.4) ** 2) / 0.5
-            )
-        elif row_idx == 1:
-            heat1 = np.exp(-((xx) ** 2 + (yy) ** 2) / 0.8) + 0.7 * np.exp(
-                -((xx - 0.8) ** 2 + (yy + 0.5) ** 2) / 0.6
-            )
-        else:
-            heat1 = np.exp(-((xx) ** 2 + (yy) ** 2) / 1.5) * leaf_mask
-        heat1 = heat1 / (np.max(heat1) + 1e-6)
+    axes[1].imshow(overlay_transfer)
+    axes[1].set_title(
+        "(B) Grad-CAM: Transfer Learning\n(Foco Anatômico em Parênquima)",
+        fontsize=11,
+        fontweight="bold",
+    )
+    axes[1].axis("off")
 
-        axes[row_idx, 1].imshow(base_img)
-        axes[row_idx, 1].imshow(heat1, cmap="jet", alpha=0.55)
-        axes[row_idx, 1].set_xticks([])
-        axes[row_idx, 1].set_yticks([])
-
-        # 3. Atenção Cenário 2 (Aleatório): Dispersão caótica pelas bordas/fundo
-        heat2 = (
-            np.sin(xx * 2.5) ** 2
-            + np.cos(yy * 2.5) ** 2
-            + 0.5 * rng.uniform(size=(100, 100))
-        )
-        heat2 = heat2 / (np.max(heat2) + 1e-6)
-
-        axes[row_idx, 2].imshow(base_img)
-        axes[row_idx, 2].imshow(heat2, cmap="jet", alpha=0.55)
-        axes[row_idx, 2].set_xticks([])
-        axes[row_idx, 2].set_yticks([])
+    axes[2].imshow(overlay_scratch)
+    axes[2].set_title(
+        "(C) Grad-CAM: Scratch (Aleatório)\n(Dispersão em Estruturas Ósseas)",
+        fontsize=11,
+        fontweight="bold",
+    )
+    axes[2].axis("off")
 
     plt.tight_layout()
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    plt.savefig(output_path, dpi=300, bbox_inches="tight")
-    plt.close(fig)
-    return output_path
+    plt.savefig(output_path, bbox_inches="tight")
+    plt.close()
+    print(f"Painel XAI salvo em {output_path}")
+    print(f"Laudo LMM salvo em {laudo_path}")
 
 
 if __name__ == "__main__":
-    generate_xai_figure(Path("results/explicabilidade_xai.png"))
-    print("Figura de explicabilidade gerada em results/explicabilidade_xai.png")
+    generate_xai_and_insights_plot()

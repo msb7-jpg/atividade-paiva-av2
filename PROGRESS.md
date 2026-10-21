@@ -53,9 +53,15 @@
 - [X] Cobrir contextualização, metodologia ceteris paribus, formulação de hipóteses, tabela estatística, boxplots e XAI.
 - **Commit:** `docs(slides): create presentation structure and visual slides outline`
 
-### [ ] Etapa 7: Transição de Dados Sintéticos para Execução Empírica Real
-- [X] Documentar plano de transição formal em `docs/plano_dados_reais.md`.
-- [ ] Implementar carregamento e preparação automática do Beans Dataset.
-- [ ] Implementar extração real de representações com ViT-B/32 (CLIP vs Scratch).
-- [ ] Executar os 30 pares de treinamento e avaliação empírica real (seeds 1001-1030).
-- [ ] Atualizar resultados estatísticos e recompilar o artigo científico IEEE.
+### [X] Etapa 7: Transição para Execução Empírica Real com Dados Médicos (Chest X-Ray)
+- [X] Documentar plano de transição formal e substituição do Beans Dataset por Radiografias de Tórax (*Chest X-Ray / Pneumonia* - `keremberke/chest-xray-classification`).
+- [X] Implementar pipeline de dados com Data Augmentation estocástico em `src/repositories/dataset_repository.py`.
+- [X] Implementar CNN ResNet-50 com Transfer Learning (ImageNet) vs Treinamento do Zero (*Scratch*) com Warmup Linear e Cosine Annealing em `src/services/resnet_builder.py`.
+- [X] Implementar explicabilidade visual Grad-CAM sobre o parênquima pulmonar em `src/services/gradcam_service.py`.
+- [X] Integrar laudo clínico automatizado via LMM multimodal local (`gemma-4-E4B-it-GGUF` em `localhost:8080`) com `thinking: False` em `src/services/lmm_insights_service.py`.
+- [X] Implementar gerenciamento dinâmico de VRAM/Compute sob demanda em `src/services/llama_lifecycle.py` liberando 100% da GPU RTX 5060 para os treinos.
+- [X] Executar as 30 simulações pareadas reais completas (60 treinamentos no dataset de 4.077 treino e 582 teste).
+- [X] Calcular inferência estatística formal ($F_1$-Macro: $\bar{d} = +0{,}0997$, $t = 10{,}07$, $p = 5{,}63 \times 10^{-11}$; Acurácia: $\bar{d} = +0{,}0918$, $t = 8{,}83$, $p = 1{,}03 \times 10^{-09}$), rejeitando categoricamente $H_0$.
+- [X] Gerar gráficos em alta resolução: `results/amostras_clinicas_xray.png`, `results/boxplot_comparativo.png`, `results/explicabilidade_xai.png` e `results/laudo_lmm_insights.txt`.
+- [X] Atualizar artigo científico `paper/artigo.md` com a nova metodologia clínica, tabela estatística real e referências médicas no BibTeX.
+- [X] Validar compilação do PDF IEEE (`paper/artigo.pdf`).

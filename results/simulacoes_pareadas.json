@@ -2,331 +2,331 @@
   {
     "seed": 1001,
     "scenario_1": {
-      "f1_macro": 0.9559848365268068,
-      "accuracy": 0.9431122062809036
+      "f1_macro": 0.9518,
+      "accuracy": 0.9605
     },
     "scenario_2": {
-      "f1_macro": 0.6062846978689623,
-      "accuracy": 0.6973259772548442
+      "f1_macro": 0.871,
+      "accuracy": 0.8849
     }
   },
   {
     "seed": 1002,
     "scenario_1": {
-      "f1_macro": 0.9436050496874451,
-      "accuracy": 0.9221561076970518
+      "f1_macro": 0.9585,
+      "accuracy": 0.9656
     },
     "scenario_2": {
-      "f1_macro": 0.6982282466313785,
-      "accuracy": 0.6578940281276527
+      "f1_macro": 0.7189,
+      "accuracy": 0.7251
     }
   },
   {
     "seed": 1003,
     "scenario_1": {
-      "f1_macro": 0.9266740154106308,
-      "accuracy": 0.9433121073083159
+      "f1_macro": 0.9448,
+      "accuracy": 0.9536
     },
     "scenario_2": {
-      "f1_macro": 0.5938587968265673,
-      "accuracy": 0.641092736717564
+      "f1_macro": 0.8535,
+      "accuracy": 0.8677
     }
   },
   {
     "seed": 1004,
     "scenario_1": {
-      "f1_macro": 0.9422046029284207,
-      "accuracy": 0.9441220003760482
+      "f1_macro": 0.9606,
+      "accuracy": 0.9674
     },
     "scenario_2": {
-      "f1_macro": 0.6574679842757436,
-      "accuracy": 0.65673546381007
+      "f1_macro": 0.8848,
+      "accuracy": 0.9038
     }
   },
   {
     "seed": 1005,
     "scenario_1": {
-      "f1_macro": 0.9313334000690882,
-      "accuracy": 0.942458615346264
+      "f1_macro": 0.9525,
+      "accuracy": 0.9605
     },
     "scenario_2": {
-      "f1_macro": 0.6260506854170994,
-      "accuracy": 0.6495034437549551
+      "f1_macro": 0.885,
+      "accuracy": 0.9072
     }
   },
   {
     "seed": 1006,
     "scenario_1": {
-      "f1_macro": 0.959534633376759,
-      "accuracy": 0.9170294654858546
+      "f1_macro": 0.9351,
+      "accuracy": 0.9485
     },
     "scenario_2": {
-      "f1_macro": 0.6812226373507737,
-      "accuracy": 0.717981703995399
+      "f1_macro": 0.8668,
+      "accuracy": 0.8832
     }
   },
   {
     "seed": 1007,
     "scenario_1": {
-      "f1_macro": 0.9258774505479137,
-      "accuracy": 0.9271830593558877
+      "f1_macro": 0.9491,
+      "accuracy": 0.9588
     },
     "scenario_2": {
-      "f1_macro": 0.6528608490877905,
-      "accuracy": 0.6833552366553978
+      "f1_macro": 0.8764,
+      "accuracy": 0.9038
     }
   },
   {
     "seed": 1008,
     "scenario_1": {
-      "f1_macro": 0.9357534013689115,
-      "accuracy": 0.931264202004844
+      "f1_macro": 0.9642,
+      "accuracy": 0.9708
     },
     "scenario_2": {
-      "f1_macro": 0.7346457894784498,
-      "accuracy": 0.712449384099141
+      "f1_macro": 0.8756,
+      "accuracy": 0.89
     }
   },
   {
     "seed": 1009,
     "scenario_1": {
-      "f1_macro": 0.9529207141078487,
-      "accuracy": 0.9617562957301916
+      "f1_macro": 0.9477,
+      "accuracy": 0.9553
     },
     "scenario_2": {
-      "f1_macro": 0.6751520404977274,
-      "accuracy": 0.6524898489984708
+      "f1_macro": 0.8899,
+      "accuracy": 0.9124
     }
   },
   {
     "seed": 1010,
     "scenario_1": {
-      "f1_macro": 0.9165194974117136,
-      "accuracy": 0.9525319580791269
+      "f1_macro": 0.9689,
+      "accuracy": 0.9742
     },
     "scenario_2": {
-      "f1_macro": 0.6394266684145408,
-      "accuracy": 0.6168426869865176
+      "f1_macro": 0.8783,
+      "accuracy": 0.9055
     }
   },
   {
     "seed": 1011,
     "scenario_1": {
-      "f1_macro": 0.9320628288067179,
-      "accuracy": 0.9508476351504318
+      "f1_macro": 0.9545,
+      "accuracy": 0.9622
     },
     "scenario_2": {
-      "f1_macro": 0.5801131060743238,
-      "accuracy": 0.665650104769991
+      "f1_macro": 0.9145,
+      "accuracy": 0.9278
     }
   },
   {
     "seed": 1012,
     "scenario_1": {
-      "f1_macro": 0.9359107967932165,
-      "accuracy": 0.9432514407683246
+      "f1_macro": 0.9374,
+      "accuracy": 0.9502
     },
     "scenario_2": {
-      "f1_macro": 0.708742554504239,
-      "accuracy": 0.5721394221273179
+      "f1_macro": 0.8813,
+      "accuracy": 0.8952
     }
   },
   {
     "seed": 1013,
     "scenario_1": {
-      "f1_macro": 0.9523852687638155,
-      "accuracy": 0.9311176441503594
+      "f1_macro": 0.9629,
+      "accuracy": 0.9691
     },
     "scenario_2": {
-      "f1_macro": 0.6293561972769831,
-      "accuracy": 0.7138061726132516
+      "f1_macro": 0.8742,
+      "accuracy": 0.8883
     }
   },
   {
     "seed": 1014,
     "scenario_1": {
-      "f1_macro": 0.9331025018984453,
-      "accuracy": 0.9345505993822384
+      "f1_macro": 0.9374,
+      "accuracy": 0.9502
     },
     "scenario_2": {
-      "f1_macro": 0.6594396036101661,
-      "accuracy": 0.6389520873622789
+      "f1_macro": 0.9024,
+      "accuracy": 0.921
     }
   },
   {
     "seed": 1015,
     "scenario_1": {
-      "f1_macro": 0.9216618707343666,
-      "accuracy": 0.9330664785036727
+      "f1_macro": 0.965,
+      "accuracy": 0.9708
     },
     "scenario_2": {
-      "f1_macro": 0.6594545101827123,
-      "accuracy": 0.6942488510670097
+      "f1_macro": 0.8429,
+      "accuracy": 0.8557
     }
   },
   {
     "seed": 1016,
     "scenario_1": {
-      "f1_macro": 0.9260125729111673,
-      "accuracy": 0.9580743963417813
+      "f1_macro": 0.9586,
+      "accuracy": 0.9656
     },
     "scenario_2": {
-      "f1_macro": 0.6878924160315981,
-      "accuracy": 0.691727402300969
+      "f1_macro": 0.8899,
+      "accuracy": 0.9055
     }
   },
   {
     "seed": 1017,
     "scenario_1": {
-      "f1_macro": 0.958375982769016,
-      "accuracy": 0.9137562904308981
+      "f1_macro": 0.959,
+      "accuracy": 0.9656
     },
     "scenario_2": {
-      "f1_macro": 0.6072312836990073,
-      "accuracy": 0.6908940715398205
+      "f1_macro": 0.8206,
+      "accuracy": 0.8333
     }
   },
   {
     "seed": 1018,
     "scenario_1": {
-      "f1_macro": 0.954693682592491,
-      "accuracy": 0.9620406549150403
+      "f1_macro": 0.9333,
+      "accuracy": 0.9467
     },
     "scenario_2": {
-      "f1_macro": 0.6895806695126224,
-      "accuracy": 0.6764564736172726
+      "f1_macro": 0.8308,
+      "accuracy": 0.8608
     }
   },
   {
     "seed": 1019,
     "scenario_1": {
-      "f1_macro": 0.9297449946388112,
-      "accuracy": 0.9498990005520134
+      "f1_macro": 0.9487,
+      "accuracy": 0.9588
     },
     "scenario_2": {
-      "f1_macro": 0.6039712617383225,
-      "accuracy": 0.6854525796244175
+      "f1_macro": 0.8686,
+      "accuracy": 0.8832
     }
   },
   {
     "seed": 1020,
     "scenario_1": {
-      "f1_macro": 0.9625664650426157,
-      "accuracy": 0.9402754272429446
+      "f1_macro": 0.9646,
+      "accuracy": 0.9708
     },
     "scenario_2": {
-      "f1_macro": 0.60160064061426,
-      "accuracy": 0.6333101774037773
+      "f1_macro": 0.7327,
+      "accuracy": 0.7388
     }
   },
   {
     "seed": 1021,
     "scenario_1": {
-      "f1_macro": 0.962114098080902,
-      "accuracy": 0.9653818142501255
+      "f1_macro": 0.9514,
+      "accuracy": 0.9588
     },
     "scenario_2": {
-      "f1_macro": 0.5728753065474326,
-      "accuracy": 0.6462125218718934
+      "f1_macro": 0.8894,
+      "accuracy": 0.9038
     }
   },
   {
     "seed": 1022,
     "scenario_1": {
-      "f1_macro": 0.941976293287977,
-      "accuracy": 0.9320833544222122
+      "f1_macro": 0.9644,
+      "accuracy": 0.9708
     },
     "scenario_2": {
-      "f1_macro": 0.701583105420541,
-      "accuracy": 0.6493749319129374
+      "f1_macro": 0.918,
+      "accuracy": 0.933
     }
   },
   {
     "seed": 1023,
     "scenario_1": {
-      "f1_macro": 0.9659666581934598,
-      "accuracy": 0.9512002573031549
+      "f1_macro": 0.961,
+      "accuracy": 0.9674
     },
     "scenario_2": {
-      "f1_macro": 0.6635121862293422,
-      "accuracy": 0.6212226627504567
+      "f1_macro": 0.8714,
+      "accuracy": 0.9003
     }
   },
   {
     "seed": 1024,
     "scenario_1": {
-      "f1_macro": 0.9351948209221137,
-      "accuracy": 0.9430509489132656
+      "f1_macro": 0.9641,
+      "accuracy": 0.9708
     },
     "scenario_2": {
-      "f1_macro": 0.7398592142981935,
-      "accuracy": 0.6579125042978432
+      "f1_macro": 0.8497,
+      "accuracy": 0.8625
     }
   },
   {
     "seed": 1025,
     "scenario_1": {
-      "f1_macro": 0.9136647525663333,
-      "accuracy": 0.9443501300408407
+      "f1_macro": 0.9669,
+      "accuracy": 0.9725
     },
     "scenario_2": {
-      "f1_macro": 0.6361366061327279,
-      "accuracy": 0.6578139829875164
+      "f1_macro": 0.7548,
+      "accuracy": 0.7629
     }
   },
   {
     "seed": 1026,
     "scenario_1": {
-      "f1_macro": 0.9276701128952457,
-      "accuracy": 0.9528554845015981
+      "f1_macro": 0.9555,
+      "accuracy": 0.9639
     },
     "scenario_2": {
-      "f1_macro": 0.6797570529593212,
-      "accuracy": 0.6675393528713303
+      "f1_macro": 0.7693,
+      "accuracy": 0.7801
     }
   },
   {
     "seed": 1027,
     "scenario_1": {
-      "f1_macro": 0.9466135984792959,
-      "accuracy": 0.9548450919764072
+      "f1_macro": 0.948,
+      "accuracy": 0.957
     },
     "scenario_2": {
-      "f1_macro": 0.6074990043270206,
-      "accuracy": 0.6588374986018396
+      "f1_macro": 0.8176,
+      "accuracy": 0.8299
     }
   },
   {
     "seed": 1028,
     "scenario_1": {
-      "f1_macro": 0.9452428259437173,
-      "accuracy": 0.9435056280501083
+      "f1_macro": 0.9399,
+      "accuracy": 0.9485
     },
     "scenario_2": {
-      "f1_macro": 0.6288406904812398,
-      "accuracy": 0.6928192267929729
+      "f1_macro": 0.8792,
+      "accuracy": 0.8935
     }
   },
   {
     "seed": 1029,
     "scenario_1": {
-      "f1_macro": 0.9306637761213181,
-      "accuracy": 0.9525783242029505
+      "f1_macro": 0.964,
+      "accuracy": 0.9708
     },
     "scenario_2": {
-      "f1_macro": 0.671063678492945,
-      "accuracy": 0.6872849687766297
+      "f1_macro": 0.8358,
+      "accuracy": 0.8488
     }
   },
   {
     "seed": 1030,
     "scenario_1": {
-      "f1_macro": 0.9113293601319765,
-      "accuracy": 0.9518455295597977
+      "f1_macro": 0.9647,
+      "accuracy": 0.9708
     },
     "scenario_2": {
-      "f1_macro": 0.7007257897264181,
-      "accuracy": 0.6230305772837532
+      "f1_macro": 0.9016,
+      "accuracy": 0.9158
     }
   }
 ]
