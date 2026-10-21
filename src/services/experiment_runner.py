@@ -163,9 +163,11 @@ class ExperimentRunner:
                 logger.info(f"Semente {seed} recuperada do cache ({self.get_run_filepath(seed)}).")
                 return saved
 
-        train_loader = self.repo.get_train_loader(
-            batch_size=self.batch_size, seed=seed, shuffle=True
-        )
+        # Pareamento: cada cenário recebe um DataLoader novo com a mesma semente. Reaproveitar
+        # um único loader faria o cenário 2 herdar o gerador já avançado pelo cenário 1, e ele
+        # veria outra ordem de batches e outras augmentations.
+        def new_train_loader():
+            return self.repo.get_train_loader(batch_size=self.batch_size, seed=seed, shuffle=True)
 
         save_cp = force_save_checkpoint or (seed in self.checkpoint_seeds)
         cp_transfer = self.checkpoints_dir / f"seed_{seed}_transfer.pt" if save_cp else None
@@ -175,7 +177,7 @@ class ExperimentRunner:
         metrics_s1, _ = self.train_and_evaluate(
             pretrained=True,
             seed=seed,
-            train_loader=train_loader,
+            train_loader=new_train_loader(),
             test_loader=test_loader,
             checkpoint_path=cp_transfer,
         )
@@ -184,7 +186,7 @@ class ExperimentRunner:
         metrics_s2, _ = self.train_and_evaluate(
             pretrained=False,
             seed=seed,
-            train_loader=train_loader,
+            train_loader=new_train_loader(),
             test_loader=test_loader,
             checkpoint_path=cp_scratch,
         )
