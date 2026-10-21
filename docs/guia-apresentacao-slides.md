@@ -20,8 +20,8 @@ Este documento é o roteiro estratégico e manual de estudo para a equipe na apr
 
 | # | Integrante | Título da Seção nos Slides | Slide(s) | Arquivos no Código | Foco Principal |
 |---|---|---|:---:|---|---|
-| **1** | **Miguel Batista** | Contexto Clínico, Desafio e Princípio de Isolamento (*Ceteris Paribus*) | 1 - 2 | `docs/instrucoes-avaliacao.md`<br>`docs/prd.md`<br>`paper/artigo.md` (Seç. I) | Motivação do diagnóstico de pneumonia pediátrica e enquadramento científico $A+B+C$ vs $A+B+C_{\text{alt}}$. |
-| **2** | **Rafaela Vidal** | Base de Dados Real e Técnica A (Data Augmentation Estocástico) | 3 - 4 | `src/repositories/dataset_repository.py`<br>`src/plots/medical_samples.py` | Partição estrita (4.077 treino / 582 teste imutável) e transformações governadas pela semente $s_i$. |
+| **1** | **Rafaela Vidal** | Contexto Clínico, Desafio e Princípio de Isolamento (*Ceteris Paribus*) | 1 - 2 | `docs/instrucoes-avaliacao.md`<br>`docs/prd.md`<br>`paper/artigo.md` (Seç. I) | Motivação do diagnóstico de pneumonia pediátrica e enquadramento científico $A+B+C$ vs $A+B+C_{\text{alt}}$. |
+| **2** | **Miguel Batista** | Base de Dados Real e Técnica A (Data Augmentation Estocástico) | 3 - 4 | `src/repositories/dataset_repository.py`<br>`src/plots/medical_samples.py` | Partição estrita (4.077 treino / 582 teste imutável) e transformações governadas pela semente $s_i$. |
 | **3** | **Beatriz Pereira** | Técnica B (ResNet-50) e a Variável Independente (Técnica C vs $C_{\text{alt}}$) | 5 - 6 | `src/services/resnet_builder.py`<br>`src/plots/architecture_diagram.py` | Conexões residuais e a comparação: Transfer Learning ImageNet vs Scratch com He Normal + Cosine Annealing. |
 | **4** | **Manuela Cavalcanti** | Protocolo Experimental Pareado ($N=30$) e Orquestração | 7 - 8 | `src/services/experiment_runner.py`<br>`src/domain/models.py`<br>`results/simulacoes_pareadas.json` | Por que $N=30$ (Teorema Central do Limite), pareamento estrito de 60 rodadas e persistência granular. |
 | **5** | **Rafael Barros** | Inferência Estatística Formal: Hipóteses e Teste $t$ Pareado | 9 - 10 | `src/services/statistical_service.py`<br>`src/plots/generator.py`<br>`results/boxplot_comparativo.png` | Formulação de $H_0$ e $H_1$, estatística $t = 10{,}07$, $p = 5{,}63 \times 10^{-11}$ e rejeição categórica de $H_0$. |
@@ -34,7 +34,7 @@ Este documento é o roteiro estratégico e manual de estudo para a equipe na apr
 
 ---
 
-### Integrante 1 — Miguel Batista
+### Integrante 1 — Rafaela Vidal
 **Tema:** Contexto Clínico, Desafio Diagnóstico e Princípio Científico de Isolamento (*Ceteris Paribus*)
 
 #### 1. Slides sob sua responsabilidade:
@@ -51,6 +51,7 @@ Este documento é o roteiro estratégico e manual de estudo para a equipe na apr
 - [docs/instrucoes-avaliacao.md](file:///home/miguelsb/workspace/atividade-paiva-av2/docs/instrucoes-avaliacao.md): Enunciado e regras de A/B testing e isolamento de variáveis.
 - [docs/prd.md](file:///home/miguelsb/workspace/atividade-paiva-av2/docs/prd.md): Requisitos de produto, problema clínico e premissas.
 - [paper/artigo.md](file:///home/miguelsb/workspace/atividade-paiva-av2/paper/artigo.md#L45-L65): Introdução e Seção III-A (Seleção e Isolamento das Técnicas).
+- Card Visual Pedagógico: `results/code_cards/card_02_resnet50_ceteris_paribus.png`.
 
 #### 4. O que precisa saber na ponta da língua:
 - O que significa *ceteris paribus* e por que ele é obrigatório numa comparação científica.
@@ -65,7 +66,7 @@ Este documento é o roteiro estratégico e manual de estudo para a equipe na apr
 
 ---
 
-### Integrante 2 — Rafaela Vidal
+### Integrante 2 — Miguel Batista
 **Tema:** Base de Dados Real e Técnica A (Data Augmentation Estocástico)
 
 #### 1. Slides sob sua responsabilidade:
@@ -82,6 +83,7 @@ Este documento é o roteiro estratégico e manual de estudo para a equipe na apr
 #### 3. Aonde olhar no código:
 - [src/repositories/dataset_repository.py](file:///home/miguelsb/workspace/atividade-paiva-av2/src/repositories/dataset_repository.py#L17-L45): Funções `get_train_transforms()` e `get_test_transforms()`.
 - [src/plots/medical_samples.py](file:///home/miguelsb/workspace/atividade-paiva-av2/src/plots/medical_samples.py): Gerador visual das amostras clínicas.
+- Card Visual Pedagógico: `results/code_cards/card_01_data_augmentation.png` (usar no slide).
 - Imagem: `results/amostras_clinicas_xray.png` (usar no slide).
 
 #### 4. O que precisa saber na ponta da língua:
