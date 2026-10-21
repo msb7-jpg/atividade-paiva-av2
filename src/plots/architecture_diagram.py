@@ -10,10 +10,12 @@ def generate_methodology_diagram(output_path: Path) -> Path:
     ax.axis("off")
 
     # Configuração tipográfica acadêmica estilo IEEE (Serif)
-    plt.rcParams.update({
-        "font.family": "serif",
-        "font.serif": ["Nimbus Roman", "DejaVu Serif", "Times New Roman"],
-    })
+    plt.rcParams.update(
+        {
+            "font.family": "serif",
+            "font.serif": ["Nimbus Roman", "DejaVu Serif", "Times New Roman"],
+        }
+    )
 
     # Estilos de caixas oficiais e sóbrios
     style_neutral = {
@@ -60,7 +62,7 @@ def generate_methodology_diagram(output_path: Path) -> Path:
         "",
         xy=(0.5, 0.79),
         xytext=(0.5, 0.84),
-        arrowprops=dict(arrowstyle="-|>", lw=1.3, color="#2c3e50", mutation_scale=12),
+        arrowprops={"arrowstyle": "-|>", "lw": 1.3, "color": "#2c3e50", "mutation_scale": 12},
     )
 
     # 2. Técnica A
@@ -84,13 +86,13 @@ def generate_methodology_diagram(output_path: Path) -> Path:
         "",
         xy=(0.28, 0.54),
         xytext=(0.42, 0.62),
-        arrowprops=dict(arrowstyle="-|>", lw=1.3, color="#1b4f72", mutation_scale=11),
+        arrowprops={"arrowstyle": "-|>", "lw": 1.3, "color": "#1b4f72", "mutation_scale": 11},
     )
     ax.annotate(
         "",
         xy=(0.72, 0.54),
         xytext=(0.58, 0.62),
-        arrowprops=dict(arrowstyle="-|>", lw=1.3, color="#7d6608", mutation_scale=11),
+        arrowprops={"arrowstyle": "-|>", "lw": 1.3, "color": "#7d6608", "mutation_scale": 11},
     )
 
     # 3. Variável Independente: C1 vs C2
@@ -133,13 +135,13 @@ def generate_methodology_diagram(output_path: Path) -> Path:
         "",
         xy=(0.42, 0.35),
         xytext=(0.28, 0.39),
-        arrowprops=dict(arrowstyle="-|>", lw=1.3, color="#1b4f72", mutation_scale=11),
+        arrowprops={"arrowstyle": "-|>", "lw": 1.3, "color": "#1b4f72", "mutation_scale": 11},
     )
     ax.annotate(
         "",
         xy=(0.58, 0.35),
         xytext=(0.72, 0.39),
-        arrowprops=dict(arrowstyle="-|>", lw=1.3, color="#7d6608", mutation_scale=11),
+        arrowprops={"arrowstyle": "-|>", "lw": 1.3, "color": "#7d6608", "mutation_scale": 11},
     )
 
     # 4. Técnica B (Explicabilidade e Auditoria Multimodal)
@@ -163,7 +165,7 @@ def generate_methodology_diagram(output_path: Path) -> Path:
         "",
         xy=(0.5, 0.165),
         xytext=(0.5, 0.205),
-        arrowprops=dict(arrowstyle="-|>", lw=1.3, color="#145a32", mutation_scale=12),
+        arrowprops={"arrowstyle": "-|>", "lw": 1.3, "color": "#145a32", "mutation_scale": 12},
     )
 
     # 5. Avaliação e Teste Pareado

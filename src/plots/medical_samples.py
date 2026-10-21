@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from PIL import Image
+
 from src.repositories.dataset_repository import DatasetRepository
 
 
@@ -18,7 +18,9 @@ def plot_medical_samples(output_path: str = "results/amostras_clinicas_xray.png"
     axes[0].axis("off")
 
     axes[1].imshow(pneumonia_img.resize((224, 224)), cmap="gray")
-    axes[1].set_title("(B) Pneumonia (Consolidação Alveolar)", fontsize=11, fontweight="bold", pad=8)
+    axes[1].set_title(
+        "(B) Pneumonia (Consolidação Alveolar)", fontsize=11, fontweight="bold", pad=8
+    )
     axes[1].axis("off")
 
     plt.tight_layout()

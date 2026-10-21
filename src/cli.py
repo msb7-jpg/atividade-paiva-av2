@@ -1,8 +1,9 @@
 from pathlib import Path
+
+import typer
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-import typer
 
 from src.domain.models import EvaluationMetrics
 from src.plots.architecture_diagram import generate_methodology_diagram
@@ -46,7 +47,9 @@ def _format_confusion_matrix(header: str, m: EvaluationMetrics) -> str:
 
 @app.command()
 def status(
-    results_dir: str = typer.Option("results", "--results-dir", "-d", help="Diretório de resultados"),
+    results_dir: str = typer.Option(
+        "results", "--results-dir", "-d", help="Diretório de resultados"
+    ),
 ) -> None:
     """Inspeciona o progresso dos experimentos, sementes executadas e checkpoints salvos."""
     base_dir = Path(results_dir)
@@ -63,7 +66,7 @@ def status(
     summary_text = (
         f"[bold]Total Planejado:[/bold] {len(all_seeds)} sementes (1001 a 1030)\n"
         f"[bold]Executadas e Persistidas:[/bold] {len(saved_runs)}/{len(all_seeds)} "
-        f"({'[green]100% Concluído[/green]' if len(saved_runs) >= len(all_seeds) else f'[yellow]{len(saved_runs)/len(all_seeds)*100:.1f}% Concluído[/yellow]'})\n"
+        f"({'[green]100% Concluído[/green]' if len(saved_runs) >= len(all_seeds) else f'[yellow]{len(saved_runs) / len(all_seeds) * 100:.1f}% Concluído[/yellow]'})\n"
         f"[bold]Arquivo Consolidado:[/bold] {'[green]Presente[/green]' if consolidated_path.exists() else '[red]Ausente[/red]'}\n"
         f"[bold]Diretório de Runs:[/bold] {runs_dir}\n"
         f"[bold]Diretório de Checkpoints:[/bold] {cp_dir}"
@@ -133,7 +136,11 @@ def status(
                 f"Reexecute com: python -m src.cli run --start-seed {ref_seed} --end-seed {ref_seed} --no-resume"
             )
         console.print(
-            Panel(cm_panel, title=f"Auditoria Clínica Amostral (Semente de Referência {ref_seed})", expand=False)
+            Panel(
+                cm_panel,
+                title=f"Auditoria Clínica Amostral (Semente de Referência {ref_seed})",
+                expand=False,
+            )
         )
 
     console.print(
@@ -148,9 +155,13 @@ def run(
     end_seed: int = typer.Option(1030, "--end-seed", help="Semente final"),
     epochs: int = typer.Option(2, "--epochs", "-e", help="Épocas por simulação"),
     batch_size: int = typer.Option(64, "--batch-size", "-b", help="Tamanho do batch"),
-    resume: bool = typer.Option(True, "--resume/--no-resume", help="Reutilizar runs já concluídas em disco"),
+    resume: bool = typer.Option(
+        True, "--resume/--no-resume", help="Reutilizar runs já concluídas em disco"
+    ),
     save_checkpoints: bool = typer.Option(
-        False, "--save-checkpoints", help="Salvar checkpoints .pt de todas as sementes (além da referência 1001)"
+        False,
+        "--save-checkpoints",
+        help="Salvar checkpoints .pt de todas as sementes (além da referência 1001)",
     ),
     skip_lmm: bool = typer.Option(False, "--skip-lmm", help="Ignorar laudo multimodal LMM"),
 ) -> None:
@@ -184,10 +195,14 @@ def run(
     results = runner.run_all_simulations(resume=resume, save_all_checkpoints=save_checkpoints)
 
     # 3. Análise estatística
-    console.print("\n[bold cyan]3. Inferência Estatística Formal (Teste t Pareado Bilateral):[/bold cyan]")
+    console.print(
+        "\n[bold cyan]3. Inferência Estatística Formal (Teste t Pareado Bilateral):[/bold cyan]"
+    )
     report = StatisticalAnalysisService.compute_paired_t_test(results)
 
-    table = Table(title=f"Resultados do Teste t Pareado Bilateral (N={len(results)}, gl={len(results)-1})")
+    table = Table(
+        title=f"Resultados do Teste t Pareado Bilateral (N={len(results)}, gl={len(results) - 1})"
+    )
     table.add_column("Métrica", style="cyan", no_wrap=True)
     table.add_column("Dif. Média (d̄)", style="magenta")
     table.add_column("Desvio (sd)", style="blue")
@@ -217,15 +232,21 @@ def run(
     console.print(table)
 
     # 4. Geração de figuras
-    console.print("\n[bold cyan]4. Gerando Gráficos e Painéis Clínicos em Alta Resolução:[/bold cyan]")
+    console.print(
+        "\n[bold cyan]4. Gerando Gráficos e Painéis Clínicos em Alta Resolução:[/bold cyan]"
+    )
     PlotGeneratorService.generate_boxplot(results, output_path=out_path / "boxplot_comparativo.png")
-    console.print("   [green]✓ Boxplot comparativo salvo em results/boxplot_comparativo.png[/green]")
+    console.print(
+        "   [green]✓ Boxplot comparativo salvo em results/boxplot_comparativo.png[/green]"
+    )
     plot_medical_samples(output_path=str(out_path / "amostras_clinicas_xray.png"))
     console.print("   [green]✓ Painel clínico salvo em results/amostras_clinicas_xray.png[/green]")
 
     # 5. Grad-CAM + LMM Insights
     if not skip_lmm:
-        console.print("\n[bold cyan]5. Ativando LMM Localhost para Explicabilidade e Laudo Clínico:[/bold cyan]")
+        console.print(
+            "\n[bold cyan]5. Ativando LMM Localhost para Explicabilidade e Laudo Clínico:[/bold cyan]"
+        )
         if not llama_mgr.is_running():
             console.print("   [yellow]Iniciando llama-server sob demanda na porta 8080...[/yellow]")
             llama_mgr.start_server(timeout=30)
@@ -237,7 +258,7 @@ def run(
         )
         console.print(
             f"   [green]✓ Painel XAI Grad-CAM gerado com predição real: "
-            f"{res_xai['transfer']['predicted_class']} ({res_xai['transfer']['confidence']*100:.1f}%).[/green]"
+            f"{res_xai['transfer']['predicted_class']} ({res_xai['transfer']['confidence'] * 100:.1f}%).[/green]"
         )
 
     console.print("\n[bold green]Pipeline concluída com sucesso![/bold green]\n")
@@ -246,19 +267,32 @@ def run(
 @app.command()
 def xai(
     seed: int = typer.Option(1001, "--seed", "-s", help="Semente do modelo treinado a utilizar"),
-    output: str = typer.Option("results/explicabilidade_xai.png", "--output", "-o", help="Caminho do painel PNG"),
-    laudo_output: str = typer.Option(
-        "results/laudo_lmm_insights.txt", "--laudo-output", "-l", help="Caminho do arquivo de laudo TXT"
+    output: str = typer.Option(
+        "results/explicabilidade_xai.png", "--output", "-o", help="Caminho do painel PNG"
     ),
-    checkpoints_dir: str = typer.Option("results/checkpoints", "--checkpoints-dir", "-c", help="Pasta de checkpoints"),
-    skip_server: bool = typer.Option(False, "--skip-server", help="Não iniciar o llama-server caso offline"),
+    laudo_output: str = typer.Option(
+        "results/laudo_lmm_insights.txt",
+        "--laudo-output",
+        "-l",
+        help="Caminho do arquivo de laudo TXT",
+    ),
+    checkpoints_dir: str = typer.Option(
+        "results/checkpoints", "--checkpoints-dir", "-c", help="Pasta de checkpoints"
+    ),
+    skip_server: bool = typer.Option(
+        False, "--skip-server", help="Não iniciar o llama-server caso offline"
+    ),
 ) -> None:
     """Executa auditoria XAI (Grad-CAM) e laudo LMM sobre um modelo treinado real."""
-    console.print(f"\n[bold cyan]=== Auditoria XAI & Consulta LMM (Semente {seed}) ===[/bold cyan]\n")
+    console.print(
+        f"\n[bold cyan]=== Auditoria XAI & Consulta LMM (Semente {seed}) ===[/bold cyan]\n"
+    )
 
     llama_mgr = LlamaLifecycleManager()
     if not skip_server and not llama_mgr.is_running():
-        console.print("[yellow]Servidor LMM não detectado em localhost:8080. Tentando iniciar...[/yellow]")
+        console.print(
+            "[yellow]Servidor LMM não detectado em localhost:8080. Tentando iniciar...[/yellow]"
+        )
         llama_mgr.start_server(timeout=30)
 
     console.print("[cyan]Realizando inferência empírica na GPU e gerando mapas Grad-CAM...[/cyan]")
@@ -269,17 +303,19 @@ def xai(
         checkpoints_dir=checkpoints_dir,
     )
 
-    console.print(f"\n[bold green]Inferência do Modelo Transfer Learning:[/bold green]")
+    console.print("\n[bold green]Inferência do Modelo Transfer Learning:[/bold green]")
     console.print(f"  • Classe Predita: [bold]{res['transfer']['predicted_class']}[/bold]")
     console.print(f"  • Confiança: [bold]{res['transfer']['confidence'] * 100:.2f}%[/bold]")
 
-    console.print(f"\n[bold yellow]Inferência do Modelo Scratch (Warmup):[/bold yellow]")
+    console.print("\n[bold yellow]Inferência do Modelo Scratch (Warmup):[/bold yellow]")
     console.print(f"  • Classe Predita: [bold]{res['scratch']['predicted_class']}[/bold]")
     console.print(f"  • Confiança: [bold]{res['scratch']['confidence'] * 100:.2f}%[/bold]")
 
-    console.print(f"\n[bold magenta]Parecer / Laudo Multimodal Gerado:[/bold magenta]")
+    console.print("\n[bold magenta]Parecer / Laudo Multimodal Gerado:[/bold magenta]")
     if res["laudo"].startswith(LAUDO_NAO_GERADO):
-        console.print(Panel(res["laudo"], title="LMM indisponível", border_style="yellow", expand=False))
+        console.print(
+            Panel(res["laudo"], title="LMM indisponível", border_style="yellow", expand=False)
+        )
     else:
         console.print(Panel(res["laudo"], title="Laudo Clínico Estruturado (LMM)", expand=False))
     console.print(f"\n[green]✓ Arquivos salvos: {output} e {laudo_output}[/green]\n")
@@ -287,22 +323,30 @@ def xai(
 
 @app.command()
 def gallery(
-    output_dir: str = typer.Option("results/gallery", "--output-dir", "-o", help="Diretório da galeria"),
+    output_dir: str = typer.Option(
+        "results/gallery", "--output-dir", "-o", help="Diretório da galeria"
+    ),
     seed: int = typer.Option(1001, "--seed", "-s", help="Semente do modelo treinado a utilizar"),
     samples_per_category: int = typer.Option(
         2, "--samples", "-n", help="Número de amostras por quadrante (TP, TN, FP, FN)"
     ),
-    checkpoints_dir: str = typer.Option("results/checkpoints", "--checkpoints-dir", "-c", help="Pasta de checkpoints"),
+    checkpoints_dir: str = typer.Option(
+        "results/checkpoints", "--checkpoints-dir", "-c", help="Pasta de checkpoints"
+    ),
 ) -> None:
     """Gera galeria clínica multi-casos (Verdadeiros Positivos, Normais e Erros) com laudos LMM."""
-    console.print(f"\n[bold cyan]=== Gerando Galeria Clínica Multi-Casos (Semente {seed}) ===[/bold cyan]\n")
+    console.print(
+        f"\n[bold cyan]=== Gerando Galeria Clínica Multi-Casos (Semente {seed}) ===[/bold cyan]\n"
+    )
     out = generate_clinical_gallery(
         output_dir=output_dir,
         seed=seed,
         samples_per_category=samples_per_category,
         checkpoints_dir=checkpoints_dir,
     )
-    console.print(f"\n[bold green]✓ Galeria completa com laudos gerada com sucesso em: {out}[/bold green]")
+    console.print(
+        f"\n[bold green]✓ Galeria completa com laudos gerada com sucesso em: {out}[/bold green]"
+    )
     console.print(f"[dim]Consulte o catálogo em: {Path(out) / 'README.md'}[/dim]\n")
 
 

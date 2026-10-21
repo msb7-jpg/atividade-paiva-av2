@@ -1,11 +1,10 @@
 import logging
 from pathlib import Path
-import matplotlib.pyplot as plt
-import numpy as np
-import torch
-from torchvision import transforms
 
-from src.repositories.dataset_repository import DatasetRepository, IDX_TO_CLASS, get_test_transforms
+import matplotlib.pyplot as plt
+import torch
+
+from src.repositories.dataset_repository import IDX_TO_CLASS, DatasetRepository, get_test_transforms
 from src.services.gradcam_service import GradCAM
 from src.services.lmm_insights_service import LMMInsightsService, laudo_or_unavailable_notice
 from src.services.resnet_builder import create_resnet50
@@ -31,6 +30,7 @@ def load_or_train_model(
             f"Checkpoint {checkpoint_path} não encontrado! Executando treinamento rápido (1 época) para obter pesos reais..."
         )
         from src.services.experiment_runner import ExperimentRunner
+
         runner = ExperimentRunner(seeds=[seed], epochs_per_simulation=1, device=str(device))
         train_loader = runner.repo.get_train_loader(batch_size=64, seed=seed, shuffle=True)
         test_loader = runner.repo.get_test_loader(batch_size=64)

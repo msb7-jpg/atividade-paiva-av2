@@ -1,12 +1,10 @@
 import logging
 from pathlib import Path
-from typing import Sequence
 
 import matplotlib.pyplot as plt
-from PIL import Image
 import torch
 
-from src.repositories.dataset_repository import DatasetRepository, IDX_TO_CLASS, get_test_transforms
+from src.repositories.dataset_repository import IDX_TO_CLASS, DatasetRepository, get_test_transforms
 from src.services.gradcam_service import GradCAM
 from src.services.lmm_insights_service import LMMInsightsService, laudo_or_unavailable_notice
 from src.services.resnet_builder import create_resnet50
@@ -202,33 +200,39 @@ def generate_clinical_gallery(
         plt.savefig(img_save_path, bbox_inches="tight")
         plt.close(fig)
 
-        gallery_metadata.append({
-            "idx": idx,
-            "category": cat,
-            "category_desc": cat_descriptions[cat],
-            "real_name": real_name,
-            "pred_transfer": pred_t_name,
-            "conf_transfer": conf_t,
-            "pred_scratch": pred_s_name,
-            "conf_scratch": conf_s,
-            "img_file": img_filename,
-            "laudo_file": laudo_filename,
-            "source_file": case["img_path"].name,
-        })
+        gallery_metadata.append(
+            {
+                "idx": idx,
+                "category": cat,
+                "category_desc": cat_descriptions[cat],
+                "real_name": real_name,
+                "pred_transfer": pred_t_name,
+                "conf_transfer": conf_t,
+                "pred_scratch": pred_s_name,
+                "conf_scratch": conf_s,
+                "img_file": img_filename,
+                "laudo_file": laudo_filename,
+                "source_file": case["img_path"].name,
+            }
+        )
 
     # 5. Gera o índice Markdown catalogando toda a galeria
     index_path = out_path / "README.md"
     with open(index_path, "w", encoding="utf-8") as f:
         f.write("# Galeria de Auditoria Clínica e Explicabilidade Visual (XAI + LMM)\n\n")
-        f.write("Esta pasta reúne instâncias radiológicas do conjunto de teste avaliadas com mapas Grad-CAM e laudos estruturados gerados pelo LMM local.\n\n")
-        f.write("| Caso | Categoria Clínica | Diagnóstico Real | Pred. Transfer | Pred. Scratch | Painel Visual | Laudo Clínico |\n")
+        f.write(
+            "Esta pasta reúne instâncias radiológicas do conjunto de teste avaliadas com mapas Grad-CAM e laudos estruturados gerados pelo LMM local.\n\n"
+        )
+        f.write(
+            "| Caso | Categoria Clínica | Diagnóstico Real | Pred. Transfer | Pred. Scratch | Painel Visual | Laudo Clínico |\n"
+        )
         f.write("| :---: | :--- | :---: | :---: | :---: | :---: | :---: |\n")
         for m in gallery_metadata:
             status_t = "✓" if m["pred_transfer"] == m["real_name"] else "✗"
             f.write(
                 f"| #{m['idx']:02d} | **{m['category']}** ({m['category_desc'].split('(')[0].strip()}) | "
-                f"`{m['real_name']}` | `{m['pred_transfer']}` ({m['conf_transfer']*100:.1f}%) {status_t} | "
-                f"`{m['pred_scratch']}` ({m['conf_scratch']*100:.1f}%) | "
+                f"`{m['real_name']}` | `{m['pred_transfer']}` ({m['conf_transfer'] * 100:.1f}%) {status_t} | "
+                f"`{m['pred_scratch']}` ({m['conf_scratch'] * 100:.1f}%) | "
                 f"[{m['img_file']}]({m['img_file']}) | [{m['laudo_file']}]({m['laudo_file']}) |\n"
             )
         f.write("\n---\n*Gerado automaticamente pelo serviço `src.plots.gallery_generator`.*\n")

@@ -1,10 +1,9 @@
 import base64
-from io import BytesIO
-import json
 import logging
-from pathlib import Path
-from PIL import Image
+from io import BytesIO
+
 import httpx
+from PIL import Image
 
 logger = logging.getLogger(__name__)
 

@@ -26,7 +26,10 @@ class StatisticalAnalysisService:
         )
         se_f1 = std_diff_f1 / np.sqrt(sample_size)
         t_crit_f1 = stats.t.ppf(1 - alpha / 2, df=sample_size - 1)
-        ci_95_f1 = (float(mean_diff_f1 - t_crit_f1 * se_f1), float(mean_diff_f1 + t_crit_f1 * se_f1))
+        ci_95_f1 = (
+            float(mean_diff_f1 - t_crit_f1 * se_f1),
+            float(mean_diff_f1 + t_crit_f1 * se_f1),
+        )
 
         # Acurácia
         mean_diff_acc = float(np.mean(acc_diffs))

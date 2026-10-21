@@ -1,13 +1,12 @@
 import json
 import logging
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
 
-import numpy as np
-from sklearn.metrics import accuracy_score, f1_score
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from sklearn.metrics import accuracy_score, f1_score
 from tqdm import tqdm
 
 from src.domain.models import EvaluationMetrics, PairedSimulationResult
@@ -23,7 +22,7 @@ class ExperimentRunner:
     def __init__(
         self,
         seeds: Sequence[int] | None = None,
-        epochs_per_simulation: int = 5,
+        epochs_per_simulation: int = 2,
         batch_size: int = 64,
         device: str | None = None,
         results_dir: str | Path = "results",
@@ -32,9 +31,7 @@ class ExperimentRunner:
         self.seeds = list(seeds if seeds is not None else range(1001, 1031))  # N = 30
         self.epochs = epochs_per_simulation
         self.batch_size = batch_size
-        self.device = torch.device(
-            device or ("cuda" if torch.cuda.is_available() else "cpu")
-        )
+        self.device = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
         self.repo = DatasetRepository()
         self.results_dir = Path(results_dir)
         self.runs_dir = self.results_dir / "runs"
@@ -77,11 +74,9 @@ class ExperimentRunner:
             )
 
         model.train()
-        for epoch in range(self.epochs):
+        for _epoch in range(self.epochs):
             for x, y in train_loader:
-                x, y = x.to(self.device, non_blocking=True), y.to(
-                    self.device, non_blocking=True
-                )
+                x, y = x.to(self.device, non_blocking=True), y.to(self.device, non_blocking=True)
                 optimizer.zero_grad()
                 out = model(x)
                 loss = criterion(out, y)
@@ -104,6 +99,7 @@ class ExperimentRunner:
                 all_targets.extend(y.numpy())
 
         from sklearn.metrics import confusion_matrix
+
         cm = confusion_matrix(all_targets, all_preds, labels=[0, 1])
         tn, fp, fn, tp = int(cm[0, 0]), int(cm[0, 1]), int(cm[1, 0]), int(cm[1, 1])
         total_samples = len(all_targets)
@@ -145,7 +141,7 @@ class ExperimentRunner:
         path = self.get_run_filepath(seed)
         if not path.exists():
             return None
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         return PairedSimulationResult(**data)
 
@@ -191,9 +187,7 @@ class ExperimentRunner:
             checkpoint_path=cp_scratch,
         )
 
-        paired = PairedSimulationResult(
-            seed=seed, scenario_1=metrics_s1, scenario_2=metrics_s2
-        )
+        paired = PairedSimulationResult(seed=seed, scenario_1=metrics_s1, scenario_2=metrics_s2)
 
         # Persistência granular imediata
         run_file = self.get_run_filepath(seed)
@@ -251,7 +245,7 @@ class ExperimentRunner:
         runs = []
         for file in sorted(runs_dir.glob("seed_*.json")):
             try:
-                with open(file, "r", encoding="utf-8") as f:
+                with open(file, encoding="utf-8") as f:
                     runs.append(PairedSimulationResult(**json.load(f)))
             except Exception as e:
                 logger.warning(f"Erro ao ler run {file}: {e}")

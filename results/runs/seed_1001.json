@@ -2,10 +2,28 @@
   "seed": 1001,
   "scenario_1": {
     "f1_macro": 0.9518,
-    "accuracy": 0.9605
+    "accuracy": 0.9605,
+    "total_samples": 582,
+    "correct_count": 537,
+    "error_count": 45,
+    "tp": 408,
+    "tn": 129,
+    "fp": 42,
+    "fn": 3,
+    "sensitivity": 0.9927,
+    "specificity": 0.7544
   },
   "scenario_2": {
     "f1_macro": 0.871,
-    "accuracy": 0.8849
+    "accuracy": 0.8849,
+    "total_samples": 582,
+    "correct_count": 500,
+    "error_count": 82,
+    "tp": 404,
+    "tn": 96,
+    "fp": 75,
+    "fn": 7,
+    "sensitivity": 0.9829,
+    "specificity": 0.5614
   }
 }

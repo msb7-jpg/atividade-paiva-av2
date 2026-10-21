@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
-from PIL import Image
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from PIL import Image
 
 
 class GradCAM:

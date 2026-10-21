@@ -102,4 +102,17 @@
 - [X] Garantir que a seção de Referências permaneça íntegra e unificada na Coluna 2 da Página 4, mantendo o artigo estritamente em 4 páginas.
 - **Commit:** `style(paper): convert multi-panel figures to vertical single-column layouts and fix IEEE aspect ratios`
 
+---
+
+### [X] Etapa 12: Auditoria Científica, Correção do Scheduler/DataLoader, Compatibilidade ROCm e Sanidade de Código
+- [X] Diagnosticar e documentar 4 inconsistências em `docs/correcoes/`:
+  - Matriz de confusão dinâmica lida diretamente das métricas reais em disco.
+  - Tratamento de indisponibilidade do LMM com erro explícito (`LAUDO_NAO_GERADO`), evitando textos simulados.
+  - Correção do scheduler Warmup Linear + Cosine Annealing para avanço por batch.
+  - Isolamento de geradores estocásticos do `DataLoader` entre Transfer e Scratch garantindo pareamento estrito.
+- [X] Adicionar script `scripts/download_dataset.py` e compatibilidade ROCm/AMD para Windows em `src/services/rocm_compat.py`.
+- [X] Validar retrocompatibilidade do modelo Pydantic `EvaluationMetrics` e sincronizar `results/runs/seed_1001.json` com os checkpoints avaliados em disco.
+- [X] Sanear codebase e eliminar 35 violações de linting/formatação com Ruff (`uvx ruff check` e `uvx ruff format`).
+- [X] Validar compilação do artigo IEEE (`paper/artigo.pdf`) com 4 páginas perfeitas e pipeline operacional.
+
 

@@ -1,7 +1,8 @@
 import os
-from pathlib import Path
 import subprocess
 import time
+from pathlib import Path
+
 import httpx
 
 
@@ -42,14 +43,22 @@ class LlamaLifecycleManager:
 
         cmd = [
             str(server_bin),
-            "-hf", "unsloth/gemma-4-E4B-it-GGUF",
-            "-m", "gemma-4-E4B-it-Q4_K_M.gguf",
-            "-ngl", "999",
-            "-c", "8192",  # 8k contexto para resposta rápida e leve
-            "-t", "8",
-            "--flash-attn", "on",
-            "--host", "0.0.0.0",
-            "--port", "8080",
+            "-hf",
+            "unsloth/gemma-4-E4B-it-GGUF",
+            "-m",
+            "gemma-4-E4B-it-Q4_K_M.gguf",
+            "-ngl",
+            "999",
+            "-c",
+            "8192",  # 8k contexto para resposta rápida e leve
+            "-t",
+            "8",
+            "--flash-attn",
+            "on",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8080",
         ]
 
         env = os.environ.copy()

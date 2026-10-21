@@ -8,14 +8,24 @@ class EvaluationMetrics(BaseModel):
     accuracy: float = Field(..., ge=0.0, le=1.0, description="Acurácia geral")
     # Campos da matriz de confusão: None = não medido (runs antigas salvas só com F1/acurácia)
     total_samples: int | None = Field(default=None, description="Total de radiografias de teste")
-    correct_count: int | None = Field(default=None, description="Total de imagens classificadas corretamente")
-    error_count: int | None = Field(default=None, description="Total de imagens classificadas incorretamente")
+    correct_count: int | None = Field(
+        default=None, description="Total de imagens classificadas corretamente"
+    )
+    error_count: int | None = Field(
+        default=None, description="Total de imagens classificadas incorretamente"
+    )
     tp: int | None = Field(default=None, description="Verdadeiros Positivos (Pneumonia detectada)")
     tn: int | None = Field(default=None, description="Verdadeiros Negativos (Sadio detectado)")
-    fp: int | None = Field(default=None, description="Falsos Positivos (Sadio confundido com Pneumonia)")
+    fp: int | None = Field(
+        default=None, description="Falsos Positivos (Sadio confundido com Pneumonia)"
+    )
     fn: int | None = Field(default=None, description="Falsos Negativos (Pneumonia não detectada)")
-    sensitivity: float | None = Field(default=None, ge=0.0, le=1.0, description="Sensibilidade / Recall de Pneumonia")
-    specificity: float | None = Field(default=None, ge=0.0, le=1.0, description="Especificidade / Recall de Sadio")
+    sensitivity: float | None = Field(
+        default=None, ge=0.0, le=1.0, description="Sensibilidade / Recall de Pneumonia"
+    )
+    specificity: float | None = Field(
+        default=None, ge=0.0, le=1.0, description="Especificidade / Recall de Sadio"
+    )
 
     @property
     def has_confusion_matrix(self) -> bool:

@@ -8,8 +8,8 @@ Uso:
 """
 
 import argparse
-from pathlib import Path
 import zipfile
+from pathlib import Path
 
 from huggingface_hub import hf_hub_download
 
@@ -28,7 +28,9 @@ def download_dataset(data_dir: Path) -> None:
         with zipfile.ZipFile(zip_path) as zf:
             zf.extractall(split_dir)
 
-        counts = {c.name: len(list(c.glob("*.jpg"))) for c in sorted(split_dir.iterdir()) if c.is_dir()}
+        counts = {
+            c.name: len(list(c.glob("*.jpg"))) for c in sorted(split_dir.iterdir()) if c.is_dir()
+        }
         print(f"[ok] {split_dir}: {counts}")
 
 

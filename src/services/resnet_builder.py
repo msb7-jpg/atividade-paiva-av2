@@ -1,8 +1,9 @@
 import math
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torchvision.models import resnet50, ResNet50_Weights
+from torchvision.models import ResNet50_Weights, resnet50
 
 
 def create_resnet50(pretrained: bool = True, seed: int = 1001) -> nn.Module:
@@ -65,7 +66,9 @@ class LinearWarmupCosineAnnealingLR:
             return self.base_lr * (self.current_step + 1) / self.warmup_steps
         cosine_steps = max(1, self.total_steps - self.warmup_steps - 1)
         progress = min(1.0, (self.current_step - self.warmup_steps) / cosine_steps)
-        return self.min_lr + 0.5 * (self.base_lr - self.min_lr) * (1.0 + math.cos(math.pi * progress))
+        return self.min_lr + 0.5 * (self.base_lr - self.min_lr) * (
+            1.0 + math.cos(math.pi * progress)
+        )
 
     def step(self) -> None:
         self.current_step += 1
