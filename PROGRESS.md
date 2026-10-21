@@ -89,4 +89,17 @@
 - [X] Sincronizar todas as especificações e documentações: `docs/prd.md`, `docs/especificacao-metodologica.md`, `AGENTS.md` e `slides/apresentacao.md` para refletir os números reais do Chest X-Ray.
 - [X] Criar o arquivo `README.md` principal do repositório com instruções completas e tabelas de resultados.
 
+---
+
+### [X] Etapa 11: Refatoração de Layout Visual e Orientação Vertical das Figuras do Artigo IEEE
+- [X] Diagnosticar distorções de escala, overflow e estiramento vertical causados por falta de `keepaspectratio` no template e formatação horizontal em colunas estreitas.
+- [X] Adicionar macros oficiais Pandoc de controle gráfico (`keepaspectratio`, `maxwidth`, `maxheight`) em `latex/template-ieee.tex`.
+- [X] Refatorar geradores de figuras de 1 linha horizontal para colunas verticais (subfiguras empilhadas em 1 coluna IEEE):
+  - `src/plots/medical_samples.py`: Painel 2x1 vertical com Tórax Sadio (topo) e Pneumonia (baixo), mantendo alta legibilidade e proporção anatômica.
+  - `src/plots/generator.py`: Boxplot 2x1 vertical com F1-Macro (A) e Acurácia (B) compartilhando eixo x e rótulos nítidos.
+  - `src/plots/xai_visualizer.py`: Painel 3x1 vertical com Radiografia Original (topo), Grad-CAM Transfer Learning (meio) e Grad-CAM Scratch (baixo).
+- [X] Otimizar fluxo de paginação em `paper/artigo.md`, distribuindo perfeitamente as 3 figuras nas colunas dedicadas das Páginas 2, 3 e 4.
+- [X] Garantir que a seção de Referências permaneça íntegra e unificada na Coluna 2 da Página 4, mantendo o artigo estritamente em 4 páginas.
+- **Commit:** `style(paper): convert multi-panel figures to vertical single-column layouts and fix IEEE aspect ratios`
+
 

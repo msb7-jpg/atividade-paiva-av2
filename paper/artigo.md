@@ -31,7 +31,7 @@ Recentemente, a integração de modelos multimodais de fundação (LMMs) tem eme
 
 A metodologia experimental foi desenhada em estrita conformidade com o princípio de *ceteris paribus*, isolando a estratégia de otimização e inicialização dos pesos como a única variável independente. A Fig. 1 ilustra as instâncias radiológicas avaliadas.
 
-![Painel comparativo de radiografias de tórax do conjunto de teste: (A) Tórax Normal com campos pulmonares translúcidos; (B) Pneumonia com consolidação alveolar patológica.](results/amostras_clinicas_xray.png){width=88%}
+![Painel comparativo de radiografias de tórax do conjunto de teste: (A) Tórax Normal com campos pulmonares translúcidos; (B) Pneumonia com consolidação alveolar patológica.](results/amostras_clinicas_xray.png)
 
 ## Seleção e Isolamento das Técnicas
 
@@ -78,7 +78,7 @@ A análise estatística revelou uma superioridade consistente e altamente expres
 
 Como o valor-$p$ correspondente ($5{,}63 \times 10^{-11}$) situa-se mais de nove ordens de magnitude abaixo de $\alpha = 0{,}05$, rejeita-se categoricamente a hipótese nula ($H_0$) em prol da hipótese alternativa ($H_1$). Resultados análogos foram obtidos para a acurácia global ($\bar{d} = +0{,}0918$, $t = 8{,}83$, $p = 1{,}03 \times 10^{-09}$, $\text{IC}_{95\%}: [0{,}0705, 0{,}1130]$).
 
-![Distribuição comparativa do desempenho empírico ($N=30$ simulações pareadas) entre Transfer Learning e Scratch com Warmup/Cosine Annealing.](results/boxplot_comparativo.png){width=88%}
+![Distribuição comparativa do desempenho empírico ($N=30$ simulações pareadas) entre Transfer Learning e Scratch com Warmup/Cosine Annealing: (A) F1-Macro; (B) Acurácia.](results/boxplot_comparativo.png)
 
 O boxplot ilustrado na Fig. 2 demonstra a distribuição das métricas. Embora o Cenário 2 tenha demonstrado convergência estável graças ao agendamento de cosseno (atingindo F1-Macro médio superior a $0{,}85$), a Transferência de Aprendizado apresentou dispersão amostral significativamente mais estreita, evidenciando resiliência frente a variações estocásticas de inicialização.
 
@@ -112,7 +112,7 @@ A decomposição diagnóstica revela que a Transferência de Aprendizado atinge 
 
 A avaliação qualitativa foi realizada sobre radiografias patológicas através da geração de mapas Grad-CAM e subsequente auditoria diagnóstica por Modelo de Linguagem e Visão Multimodal (LMM) executado localmente. A Fig. 3 apresenta o comparativo de ativação espacial.
 
-![Auditoria qualitativa por Grad-CAM: (A) Radiografia original com pneumonia; (B) Transfer Learning com foco concentrado em parênquima pulmonar; (C) Treinamento do Zero com dispersão em estruturas ósseas claviculares.](results/explicabilidade_xai.png){width=88%}
+![Auditoria qualitativa por Grad-CAM: (A) Radiografia original com pneumonia; (B) Transfer Learning com foco concentrado em parênquima pulmonar; (C) Treinamento do Zero com dispersão em estruturas ósseas claviculares.](results/explicabilidade_xai.png)
 
 A auditoria computacional realizada pelo LMM sobre o mapa do Cenário 1 transcreveu formalmente:
 
@@ -121,6 +121,8 @@ A auditoria computacional realizada pelo LMM sobre o mapa do Cenário 1 transcre
 > **3. Conclusão Diagnóstica:** *O diagnóstico do classificador é plausível e clinicamente fundamentado em alterações teciduais pulmonares.*
 
 Em contrapartida, conforme demonstrado na Fig. 3(C), o modelo inicializado do zero apresentou gradientes difusos, canalizando parcelas de ativação para as bordas pleurais e articulações claviculares externas, justificando sua menor estabilidade preditiva.
+
+\newpage
 
 # Conclusão
 

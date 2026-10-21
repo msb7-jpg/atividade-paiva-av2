@@ -116,32 +116,35 @@ def generate_xai_and_insights_plot(
     with open(laudo_path, "w", encoding="utf-8") as f:
         f.write(laudo)
 
-    # 4. Renderiza o painel visual com anotações empíricas reais
-    fig, axes = plt.subplots(1, 3, figsize=(15, 5), dpi=300)
+    # 4. Renderiza o painel visual com anotações empíricas reais (layout vertical para coluna IEEE)
+    fig, axes = plt.subplots(3, 1, figsize=(3.8, 9.8), dpi=300)
 
     axes[0].imshow(raw_pneumonia.resize((224, 224)), cmap="gray")
     axes[0].set_title(
-        "(A) Radiografia Original\n(Caso Clínico Real: Pneumonia)",
-        fontsize=11,
+        "(A) Radiografia Original (Pneumonia)",
+        fontsize=10,
         fontweight="bold",
+        pad=6,
     )
     axes[0].axis("off")
 
     axes[1].imshow(overlay_transfer)
     axes[1].set_title(
         f"(B) Grad-CAM: Transfer Learning\nPredição: {predicted_class_t} ({conf_t * 100:.1f}%)",
-        fontsize=11,
+        fontsize=10,
         fontweight="bold",
         color="#0d47a1",
+        pad=6,
     )
     axes[1].axis("off")
 
     axes[2].imshow(overlay_scratch)
     axes[2].set_title(
         f"(C) Grad-CAM: Scratch (Warmup)\nPredição: {predicted_class_s} ({conf_s * 100:.1f}%)",
-        fontsize=11,
+        fontsize=10,
         fontweight="bold",
         color="#b71c1c",
+        pad=6,
     )
     axes[2].axis("off")
 

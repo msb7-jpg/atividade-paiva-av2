@@ -6,7 +6,9 @@
 - Rafaela Vidal (`rbv2@cesar.school`)  
 - Beatriz Pereira (`bcbsp@cesar.school`)  
 - Manuela Cavalcanti (`mca2@cesar.school`)  
-- Rafael Barros (`ralb@cesar.school`)
+- Rafael Barros (`ralb@cesar.school`)  
+- Ygor Rosa (`yr@cesar.school`)  
+- Hugo Alcântara (`ha@cesar.school`)
 
 ---
 

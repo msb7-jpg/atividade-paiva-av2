@@ -17,6 +17,8 @@ Este documento é a referência central e mandatória para agentes de Inteligên
   - Beatriz Pereira (`bcbsp@cesar.school`)
   - Manuela Cavalcanti (`mca2@cesar.school`)
   - Rafael Barros (`ralb@cesar.school`)
+  - Ygor Rosa (`yr@cesar.school`)
+  - Hugo Alcântara (`ha@cesar.school`)
 - **Repositório Remoto:** `git@github.com:msb7-jpg/atividade-paiva-av2.git`
 - **Documentação Externa Compartilhada:** _(Insira aqui o link do Google Docs da equipe, se houver)_
 
