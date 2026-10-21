@@ -8,7 +8,7 @@ import torch
 
 from src.repositories.dataset_repository import DatasetRepository, IDX_TO_CLASS, get_test_transforms
 from src.services.gradcam_service import GradCAM
-from src.services.lmm_insights_service import LMMInsightsService
+from src.services.lmm_insights_service import LMMInsightsService, laudo_or_unavailable_notice
 from src.services.resnet_builder import create_resnet50
 
 logger = logging.getLogger(__name__)
@@ -140,7 +140,8 @@ def generate_clinical_gallery(
         cam_s.remove_hooks()
 
         # Consulta ao LMM
-        laudo = lmm_service.analyze_radiograph_and_heatmap(
+        laudo = laudo_or_unavailable_notice(
+            lmm_service,
             raw_img,
             overlay_t,
             predicted_class=pred_t_name,

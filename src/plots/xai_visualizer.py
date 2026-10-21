@@ -7,7 +7,7 @@ from torchvision import transforms
 
 from src.repositories.dataset_repository import DatasetRepository, IDX_TO_CLASS, get_test_transforms
 from src.services.gradcam_service import GradCAM
-from src.services.lmm_insights_service import LMMInsightsService
+from src.services.lmm_insights_service import LMMInsightsService, laudo_or_unavailable_notice
 from src.services.resnet_builder import create_resnet50
 
 logger = logging.getLogger(__name__)
@@ -103,7 +103,8 @@ def generate_xai_and_insights_plot(
 
     # 3. Consulta ao LMM Local (com os dados reais inferidos pelo modelo)
     lmm_service = LMMInsightsService()
-    laudo = lmm_service.analyze_radiograph_and_heatmap(
+    laudo = laudo_or_unavailable_notice(
+        lmm_service,
         raw_pneumonia,
         overlay_transfer,
         predicted_class=predicted_class_t,

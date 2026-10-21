@@ -8,6 +8,12 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
+LAUDO_NAO_GERADO = "[LAUDO NÃO GERADO — LMM indisponível]"
+
+
+class LMMUnavailableError(RuntimeError):
+    """O servidor LMM local não respondeu ou devolveu uma resposta inválida."""
+
 
 class LMMInsightsService:
     """Consome o modelo multimodal local (OpenAI-compatible) em localhost:8080."""
@@ -82,13 +88,26 @@ class LMMInsightsService:
                 response.raise_for_status()
                 data = response.json()
                 content = data["choices"][0]["message"]["content"]
-                return content.strip()
-        except Exception as e:
-            logger.warning(
-                f"Servidor LMM local offline ou resposta não obtida ({e}). Gerando parecer estruturado de fallback."
-            )
-            return (
-                f"1. Análise Anatômica: O mapa de calor Grad-CAM converge para as bases e terço inferior dos pulmões.\n"
-                f"2. Coerência Clínica: O padrão de ativação coincide com áreas de aumento de densidade compatíveis com {predicted_class}.\n"
-                f"3. Síntese do Laudo: Decisão com foco em estruturas intra-pulmonares, sem dependência de artefatos de fundo."
-            )
+        except (httpx.HTTPError, ValueError, KeyError, IndexError, TypeError) as e:
+            raise LMMUnavailableError(f"LMM em {self.chat_url} não respondeu: {e!r}") from e
+
+        if not content or not content.strip():
+            raise LMMUnavailableError(f"LMM em {self.chat_url} retornou resposta vazia.")
+        return content.strip()
+
+
+def laudo_or_unavailable_notice(
+    lmm_service: LMMInsightsService,
+    original_image: Image.Image,
+    heatmap_image: Image.Image,
+    predicted_class: str,
+    confidence: float,
+) -> str:
+    """Obtém o laudo do LMM ou um aviso explícito de que ele não foi gerado (nunca um texto inventado)."""
+    try:
+        return lmm_service.analyze_radiograph_and_heatmap(
+            original_image, heatmap_image, predicted_class=predicted_class, confidence=confidence
+        )
+    except LMMUnavailableError as e:
+        logger.warning(str(e))
+        return f"{LAUDO_NAO_GERADO} {e}"
