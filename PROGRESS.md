@@ -52,3 +52,10 @@
 - [X] Redigir roteiro completo e estrutura visual dos slides em `slides/apresentacao.md`.
 - [X] Cobrir contextualização, metodologia ceteris paribus, formulação de hipóteses, tabela estatística, boxplots e XAI.
 - **Commit:** `docs(slides): create presentation structure and visual slides outline`
+
+### [ ] Etapa 7: Transição de Dados Sintéticos para Execução Empírica Real
+- [X] Documentar plano de transição formal em `docs/plano_dados_reais.md`.
+- [ ] Implementar carregamento e preparação automática do Beans Dataset.
+- [ ] Implementar extração real de representações com ViT-B/32 (CLIP vs Scratch).
+- [ ] Executar os 30 pares de treinamento e avaliação empírica real (seeds 1001-1030).
+- [ ] Atualizar resultados estatísticos e recompilar o artigo científico IEEE.
