@@ -6,15 +6,20 @@ class EvaluationMetrics(BaseModel):
 
     f1_macro: float = Field(..., ge=0.0, le=1.0, description="F1-Score macro")
     accuracy: float = Field(..., ge=0.0, le=1.0, description="Acurácia geral")
-    total_samples: int = Field(default=582, description="Total de radiografias de teste")
-    correct_count: int = Field(default=0, description="Total de imagens classificadas corretamente")
-    error_count: int = Field(default=0, description="Total de imagens classificadas incorretamente")
-    tp: int = Field(default=0, description="Verdadeiros Positivos (Pneumonia detectada)")
-    tn: int = Field(default=0, description="Verdadeiros Negativos (Sadio detectado)")
-    fp: int = Field(default=0, description="Falsos Positivos (Sadio confundido com Pneumonia)")
-    fn: int = Field(default=0, description="Falsos Negativos (Pneumonia não detectada)")
-    sensitivity: float = Field(default=0.0, ge=0.0, le=1.0, description="Sensibilidade / Recall de Pneumonia")
-    specificity: float = Field(default=0.0, ge=0.0, le=1.0, description="Especificidade / Recall de Sadio")
+    # Campos da matriz de confusão: None = não medido (runs antigas salvas só com F1/acurácia)
+    total_samples: int | None = Field(default=None, description="Total de radiografias de teste")
+    correct_count: int | None = Field(default=None, description="Total de imagens classificadas corretamente")
+    error_count: int | None = Field(default=None, description="Total de imagens classificadas incorretamente")
+    tp: int | None = Field(default=None, description="Verdadeiros Positivos (Pneumonia detectada)")
+    tn: int | None = Field(default=None, description="Verdadeiros Negativos (Sadio detectado)")
+    fp: int | None = Field(default=None, description="Falsos Positivos (Sadio confundido com Pneumonia)")
+    fn: int | None = Field(default=None, description="Falsos Negativos (Pneumonia não detectada)")
+    sensitivity: float | None = Field(default=None, ge=0.0, le=1.0, description="Sensibilidade / Recall de Pneumonia")
+    specificity: float | None = Field(default=None, ge=0.0, le=1.0, description="Especificidade / Recall de Sadio")
+
+    @property
+    def has_confusion_matrix(self) -> bool:
+        return None not in (self.tp, self.tn, self.fp, self.fn)
 
 
 class PairedSimulationResult(BaseModel):

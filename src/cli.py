@@ -4,6 +4,7 @@ from rich.panel import Panel
 from rich.table import Table
 import typer
 
+from src.domain.models import EvaluationMetrics
 from src.plots.architecture_diagram import generate_methodology_diagram
 from src.plots.gallery_generator import generate_clinical_gallery
 from src.plots.generator import PlotGeneratorService
@@ -11,12 +12,36 @@ from src.plots.medical_samples import plot_medical_samples
 from src.plots.xai_visualizer import generate_xai_and_insights_plot
 from src.services.experiment_runner import ExperimentRunner
 from src.services.llama_lifecycle import LlamaLifecycleManager
+from src.services.lmm_insights_service import LAUDO_NAO_GERADO
+from src.services.rocm_compat import apply_rocm_windows_workarounds
 from src.services.statistical_service import StatisticalAnalysisService
+
+apply_rocm_windows_workarounds()
 
 app = typer.Typer(
     help="CLI para execução empírica real, persistência e inferência estatística da 2ª Avaliação (CESAR School)"
 )
 console = Console()
+
+
+def _format_confusion_matrix(header: str, m: EvaluationMetrics) -> str:
+    """Formata a matriz de confusão de um cenário a partir das métricas salvas em disco."""
+    tp, tn, fp, fn = m.tp, m.tn, m.fp, m.fn
+    assert tp is not None and tn is not None and fp is not None and fn is not None
+    positives = tp + fn
+    negatives = tn + fp
+    total = positives + negatives
+    correct = tp + tn
+    errors = fp + fn
+    return (
+        f"{header}\n"
+        f"  • Acertos Totais: [bold]{correct} / {total} ({correct / total:.2%})[/bold]  |  "
+        f"Erros: [bold]{errors} / {total} ({errors / total:.2%})[/bold]\n"
+        f"  • Sensibilidade (Pneumonia): [bold]{tp / positives:.2%}[/bold] "
+        f"({tp} de {positives} detectadas, {fn} Falsos Negativos)\n"
+        f"  • Especificidade (Sadio):   [bold]{tn / negatives:.2%}[/bold] "
+        f"({tn} de {negatives} confirmadas sadias, {fp} Falsos Positivos)"
+    )
 
 
 @app.command()
@@ -87,19 +112,29 @@ def status(
 
     console.print(table)
 
-    if 1001 in completed_seeds:
-        cm_panel = (
-            "[bold cyan]Conjunto de Teste Independente:[/bold cyan] 582 radiografias (171 Sadias + 411 com Pneumonia)\n\n"
-            "[bold green]Cenário 1 (Transfer Learning - ResNet-50 ImageNet):[/bold green]\n"
-            "  • Acertos Totais: [bold]537 / 582 (92.27%)[/bold]  |  Erros: [bold]45 / 582 (7.73%)[/bold]\n"
-            "  • Sensibilidade (Pneumonia): [bold]99.27%[/bold] (408 de 411 detectadas, apenas 3 Falsos Negativos)\n"
-            "  • Especificidade (Sadio):   [bold]75.44%[/bold] (129 de 171 confirmadas sadias)\n\n"
-            "[bold yellow]Cenário 2 (Scratch - Treinamento do Zero + Cosine):[/bold yellow]\n"
-            "  • Acertos Totais: [bold]500 / 582 (85.91%)[/bold]  |  Erros: [bold]82 / 582 (14.09%)[/bold] [dim](quase o dobro de erros)[/dim]\n"
-            "  • Sensibilidade (Pneumonia): [bold]98.29%[/bold] (404 de 411 detectadas, 7 Falsos Negativos)\n"
-            "  • Especificidade (Sadio):   [bold]56.14%[/bold] (96 de 171 confirmadas sadias, 75 Falsos Positivos)"
+    ref_seed = 1001
+    if ref_seed in completed_seeds:
+        ref_run = completed_seeds[ref_seed]
+        if ref_run.scenario_1.has_confusion_matrix and ref_run.scenario_2.has_confusion_matrix:
+            cm_panel = (
+                _format_confusion_matrix(
+                    "[bold green]Cenário 1 (Transfer Learning - ResNet-50 ImageNet):[/bold green]",
+                    ref_run.scenario_1,
+                )
+                + "\n\n"
+                + _format_confusion_matrix(
+                    "[bold yellow]Cenário 2 (Scratch - Treinamento do Zero + Cosine):[/bold yellow]",
+                    ref_run.scenario_2,
+                )
+            )
+        else:
+            cm_panel = (
+                "[yellow]Esta run foi salva sem a matriz de confusão (apenas F1 e acurácia).[/yellow]\n"
+                f"Reexecute com: python -m src.cli run --start-seed {ref_seed} --end-seed {ref_seed} --no-resume"
+            )
+        console.print(
+            Panel(cm_panel, title=f"Auditoria Clínica Amostral (Semente de Referência {ref_seed})", expand=False)
         )
-        console.print(Panel(cm_panel, title="Auditoria Clínica Amostral (Semente de Referência 1001)", expand=False))
 
     console.print(
         "\n[dim]Dica: Para executar sementes pendentes ou reusar runs salvas, use 'python -m src.cli run --resume'[/dim]\n"
@@ -243,7 +278,10 @@ def xai(
     console.print(f"  • Confiança: [bold]{res['scratch']['confidence'] * 100:.2f}%[/bold]")
 
     console.print(f"\n[bold magenta]Parecer / Laudo Multimodal Gerado:[/bold magenta]")
-    console.print(Panel(res["laudo"], title="Laudo Clínico Estruturado (LMM)", expand=False))
+    if res["laudo"].startswith(LAUDO_NAO_GERADO):
+        console.print(Panel(res["laudo"], title="LMM indisponível", border_style="yellow", expand=False))
+    else:
+        console.print(Panel(res["laudo"], title="Laudo Clínico Estruturado (LMM)", expand=False))
     console.print(f"\n[green]✓ Arquivos salvos: {output} e {laudo_output}[/green]\n")
 
 
