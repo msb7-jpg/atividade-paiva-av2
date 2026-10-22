@@ -266,7 +266,27 @@ Este documento é o roteiro estratégico e manual de estudo para a equipe na apr
 
 ---
 
-## 4. Guia de Demonstração ao Vivo no Terminal (CLI)
+## 4. Guia de Inserção Visual: Qual Imagem e Card de Código vai em Cada Slide
+
+Para que a apresentação tenha alto impacto visual e demonstre o domínio da engenharia e da ciência do projeto, cada slide deve conter sua respectiva evidência gráfica ou card de código gerado em alta resolução:
+
+### Tabela Oficial de Mapeamento Visual (Deck de 9 Slides)
+
+| Slide | Título / Tema | Apresentador(a) | Ativo Visual Recomendado | Caminho do Arquivo | Dica de Diagramação no Slide |
+| :---: | :--- | :--- | :--- | :--- | :--- |
+| **1** | **Capa do Trabalho** | Equipe | Logo CESAR School / Ícone de IA Médica | `docs/` | Centralizado ou cabeçalho elegante. |
+| **2** | **1. Contexto Clínico: Diagnóstico Pediátrico** | **Rafaela Vidal** | Amostras Clínicas de Radiografias (Sadio vs Pneumonia) | `results/amostras_clinicas_xray.png` | Texto à esquerda; painel vertical com as 2 radiografias à direita para mostrar as opacidades pulmonares. |
+| **3** | **2. Isolamento Experimental (*Ceteris Paribus*)** | **Miguel Batista** | **Card 1** (Data Augmentation) **OU** **Card 2** (ResNet Ceteris Paribus) | `results/code_cards/card_01_data_augmentation.png`<br>`results/code_cards/card_02_resnet50_ceteris_paribus.png` | Texto conceitual à esquerda ($A+B+C$ vs $A+B+C_{\text{alt}}$); Card de código à direita comprovando o controle de variáveis. |
+| **4** | **3. Arquitetura do Pipeline Experimental** | **Beatriz Pereira** | Diagrama Metodológico Oficial IEEE **e/ou** **Card 3** (DataLoader Pareado) | `results/metodologia_arquitetura.png`<br>`results/code_cards/card_03_paired_dataloader.png` | Diagrama do fluxo à direita, destacando as 30 sementes e o isolamento de geradores estocásticos. |
+| **5** | **4. Decisão Baseada em Hipóteses Estatísticas** | **Manuela Cavalcanti** | Fórmulas Matemáticas de $H_0$, $H_1$, Teorema Central do Limite e Pareamento | *(Equações formatadas no slide)* | Fórmulas em destaque central ou lateral com caixas de destaque para $H_0$ e $H_1$. |
+| **6** | **5. Resultados da Inferência Estatística ($N=30$)** | **Rafael Barros** | Boxplot Comparativo Oficial (F1 e Acurácia) **e** **Card 4** (Teste $t$) | `results/boxplot_comparativo.png`<br>`results/code_cards/card_04_paired_t_test.png` | Boxplot em tamanho destacado à direita; texto com métricas à esquerda provando $p = 5{,}63 \times 10^{-11}$. |
+| **7** | **6. Matriz de Confusão e Diagnóstico de Erros** | **Ygor Rosa** | **Card 5** (Auditoria Clínica da Matriz de Confusão) | `results/code_cards/card_05_confusion_matrix_audit.png` | Card de código à direita com os números 537 vs 500, enfatizando a minimização de Falsos Negativos (3 vs 7). |
+| **8** | **7. Explicabilidade Visual (Grad-CAM) e Interpretabilidade** | **Hugo Alcântara** | Painel Grad-CAM Pulmonar **e** **Card 6** (Grad-CAM) / **Card 7** (LMM) | `results/explicabilidade_xai.png`<br>`results/code_cards/card_06_gradcam_pulmonary.png`<br>`results/code_cards/card_07_lmm_insights.png` | Painel XAI com heatmap no centro/direita mostrando o foco no parênquima vs dispersão nas costelas. |
+| **9** | **8. Conclusão e Entregáveis do Projeto** | **Hugo / Equipe** | Miniatura do Artigo IEEE de 4 páginas compilado | `paper/pages/page-01.png` | Exibir a capa do artigo oficial à direita, reforçando a conformidade com as exigências da avaliação. |
+
+---
+
+## 5. Guia de Demonstração ao Vivo no Terminal (CLI)
 
 Durante a apresentação ou perguntas, qualquer integrante pode demonstrar os comandos executáveis do projeto no terminal:
 
@@ -289,7 +309,7 @@ uv run python -m src.cli gallery
 
 ---
 
-## 5. Dicionário Técnico Rápido para Ninguém se Confundir
+## 6. Dicionário Técnico Rápido para Ninguém se Confundir
 
 | Termo | Definição Rápida para Usar na Apresentação |
 |---|---|
