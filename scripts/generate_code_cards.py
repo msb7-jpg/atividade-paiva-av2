@@ -1,7 +1,7 @@
 """Gerador de Cards Visuais de Código Pedagógico para Apresentação em Slides.
 
 Renderiza trechos Python essenciais com Highlight.js e Chromium Headless (Retina 2x),
-salvando imagens PNG em results/code_cards/.
+salvando imagens PNG em results/code_cards/ com os nomes dos integrantes no nome do arquivo.
 """
 
 import html
@@ -35,10 +35,42 @@ if not HLJS_CSS_PATH.exists():
 HLJS_JS = HLJS_JS_PATH.read_text(encoding="utf-8")
 HLJS_CSS = HLJS_CSS_PATH.read_text(encoding="utf-8")
 
-# 2. Definição dos 7 trechos de código pedagógicos
+# 2. Definição dos 7 trechos de código pedagógicos com o nome dos integrantes
 CARDS = [
     {
-        "id": "card_01_data_augmentation",
+        "id": "card_01_rafaela_vidal_dataset_chest_xray",
+        "title": "Contexto Clínico & Dataset: Partição Imutável do Chest X-Ray",
+        "file": "src/repositories/dataset_repository.py",
+        "speaker": "Rafaela Vidal",
+        "takeaway": "4.077 radiografias de treino e 582 de teste independente (171 sadias / 411 pneumonia). O conjunto de teste é imutável em todas as 60 rodadas.",
+        "code": """from pathlib import Path
+from torch.utils.data import Dataset
+from torchvision import transforms
+
+# -------------------------------------------------------------------------
+# Base de Dados Médica: Chest X-Ray (Kermany et al. / Kermany Dataset)
+# Por que: Desbalanceamento clínico real (2.7x mais pneumonia do que normal).
+# O teste de 582 imagens é congelado para impedir vazamento (data leakage).
+# -------------------------------------------------------------------------
+class ChestXRayDataset(Dataset):
+    CLASSES = ["NORMAL", "PNEUMONIA"]           # 0 = Sadio, 1 = Pneumonia
+
+    def __init__(self, root_dir: Path, transform: transforms.Compose | None = None):
+        self.root_dir = Path(root_dir)
+        self.transform = transform
+        # Treino: 1.104 normais + 2.973 pneumonias = 4.077 radiografias
+        # Teste:    171 normais +   411 pneumonias =   582 radiografias (Cego)
+        self.samples = [
+            (img, label_idx)
+            for label_idx, cls_name in enumerate(self.CLASSES)
+            for img in sorted((self.root_dir / cls_name).glob("*.jpg"))
+        ]
+
+    def __len__(self) -> int:
+        return len(self.samples)""",
+    },
+    {
+        "id": "card_02_miguel_batista_data_augmentation",
         "title": "Técnica A: Data Augmentation Estocástico com Restrição Anatômica",
         "file": "src/repositories/dataset_repository.py",
         "speaker": "Miguel Batista",
@@ -65,70 +97,38 @@ def get_clinical_train_transforms() -> T.Compose:
     ])""",
     },
     {
-        "id": "card_02_resnet50_ceteris_paribus",
-        "title": "Técnica B, C vs C_alt: Isolamento Ceteris Paribus na ResNet-50",
-        "file": "src/services/resnet_builder.py",
-        "speaker": "Beatriz Pereira",
-        "takeaway": "A arquitetura residual e o otimizador são fixados; isolamos estritamente a inicialização pré-treinada (ImageNet) vs estocástica (He Normal).",
-        "code": """import torch.nn as nn
+        "id": "card_03_hugo_alcantara_resnet50_pipeline",
+        "title": "Técnica B, C vs C_alt & Pareamento: ResNet-50 e DataLoader Isolado",
+        "file": "src/services/resnet_builder.py & experiment_runner.py",
+        "speaker": "Hugo Alcântara",
+        "takeaway": "Mantém ceteris paribus (Transfer ImageNet vs He Normal com Cosine) e isola o gerador do DataLoader para idênticos lotes nas 30 sementes.",
+        "code": """import torch
+import torch.nn as nn
 from torchvision.models import ResNet50_Weights, resnet50
+from torch.utils.data import DataLoader, Dataset
 
 # -------------------------------------------------------------------------
-# Princípio Ceteris Paribus: ResNet-50 com Transfer Learning vs Scratch
-# Por que: Conexões de salto F(x)+x evitam dissipação de gradiente. A rede é
-# mantida idêntica, isolando a inicialização como variável independente pura.
+# Técnica B fixa (ResNet-50) e Variável Independente C vs C_alt (Pareada)
+# Por que: Topologia idêntica isola a inicialização; DataLoader com gerador
+# dedicado garante que Transfer e Scratch vejam rigorosamente os mesmos dados.
 # -------------------------------------------------------------------------
 def build_resnet50_scenario(pretrained: bool = True) -> nn.Module:
     weights = ResNet50_Weights.DEFAULT if pretrained else None
     model = resnet50(weights=weights)
-
     if not pretrained:
-        # Cenário 2 (Scratch): Inicialização He Normal (Kaiming) para ReLU
-        # Garante variância constante das ativações ao longo das 50 camadas
+        # Cenário 2 (Scratch): He Normal (Kaiming) para variância estável com ReLU
         for m in model.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+    model.fc = nn.Linear(model.fc.in_features, 2)
+    return model
 
-    # Cabeça linear binária compartilhada: 0 = NORMAL, 1 = PNEUMONIA
-    in_features = model.fc.in_features
-    model.fc = nn.Linear(in_features, 2)
-    return model""",
+def make_paired_loader(dataset: Dataset, seed: int, batch_size: int = 64) -> DataLoader:
+    gen = torch.Generator().manual_seed(seed)  # Gerador isolado por semente s_i
+    return DataLoader(dataset, batch_size=batch_size, shuffle=True, generator=gen)""",
     },
     {
-        "id": "card_03_paired_dataloader",
-        "title": "Protocolo Pareado: Isolamento de Geradores no DataLoader",
-        "file": "src/services/experiment_runner.py",
-        "speaker": "Manuela Cavalcanti",
-        "takeaway": "Geradores independentes com a semente s_i garantem que Transfer e Scratch enfrentem rigorosamente a mesma ordem de lotes e transformações.",
-        "code": """import torch
-from torch.utils.data import DataLoader, Dataset
-
-# -------------------------------------------------------------------------
-# Protocolo Pareado Estrito: Isolamento de Geradores Aleatórios por Semente
-# Por que: Sem gerador dedicado, o Scratch herda o gerador já avançado do
-# Transfer, quebrando a premissa de condições estocásticas rigorosamente iguais.
-# -------------------------------------------------------------------------
-def create_paired_dataloaders(dataset: Dataset, seed: int, batch_size: int = 64):
-    def make_loader() -> DataLoader:
-        # Gerador isolado semeado: garante paridade exata de permutações
-        generator = torch.Generator()
-        generator.manual_seed(seed)
-        return DataLoader(
-            dataset,
-            batch_size=batch_size,
-            shuffle=True,
-            generator=generator,
-            num_workers=4,
-            pin_memory=True,
-        )
-
-    # Ambos os cenários recebem exatamente os mesmos batches e augmentations
-    loader_transfer = make_loader()
-    loader_scratch = make_loader()
-    return loader_transfer, loader_scratch""",
-    },
-    {
-        "id": "card_04_paired_t_test",
+        "id": "card_04_rafael_barros_paired_t_test",
         "title": "Inferência Estatística Formal: Teste t de Student Pareado",
         "file": "src/services/statistical_service.py",
         "speaker": "Rafael Barros",
@@ -156,7 +156,7 @@ def compute_paired_statistics(f1_transfer: list[float], f1_scratch: list[float])
     return {"mean_diff": mean_diff, "t": t_stat, "p_value": p_value, "cohens_d": cohens_d}""",
     },
     {
-        "id": "card_05_confusion_matrix_audit",
+        "id": "card_05_ygor_rosa_confusion_matrix_audit",
         "title": "Auditoria Diagnóstica Amostral: Matriz de Confusão & Trade-offs",
         "file": "src/cli.py & src/domain/models.py",
         "speaker": "Ygor Rosa",
@@ -181,10 +181,10 @@ def audit_clinical_performance(tp: int, tn: int, fp: int, fn: int):
     }""",
     },
     {
-        "id": "card_06_gradcam_pulmonary",
+        "id": "card_06_beatriz_pereira_gradcam_pulmonary",
         "title": "Interpretabilidade Visual: Grad-CAM na layer4 da ResNet-50",
         "file": "src/services/gradcam_service.py",
-        "speaker": "Hugo Alcântara",
+        "speaker": "Beatriz Pereira",
         "takeaway": "O filtro ReLU isola estritamente as feições com gradiente positivo; pesos ponderados evidenciam onde a rede enxergou consolidações pulmonares.",
         "code": """import torch
 import torch.nn.functional as F
@@ -209,10 +209,10 @@ def compute_gradcam(activations: torch.Tensor, gradients: torch.Tensor) -> torch
     return cam.squeeze()""",
     },
     {
-        "id": "card_07_lmm_insights",
+        "id": "card_07_manuela_cavalcanti_lmm_insights",
         "title": "Auditoria Diagnóstica Multimodal: LMM Local com Fallback Estrito",
         "file": "src/services/lmm_insights_service.py",
-        "speaker": "Rafaela Vidal",
+        "speaker": "Manuela Cavalcanti",
         "takeaway": "Validação automática por LMM (Gemma 4 local em localhost:8080) atestando coerência anatômica, falhando explicitamente em caso de indisponibilidade.",
         "code": '''import httpx
 
@@ -476,10 +476,10 @@ def render_card(card: dict) -> Path:
 
 
 def main():
-    print(f"==> Gerando {len(CARDS)} cards de código pedagógico...")
+    print(f"==> Gerando {len(CARDS)} cards de código pedagógico com nomes dos integrantes...")
     for idx, card in enumerate(CARDS, start=1):
         png_path = render_card(card)
-        print(f"[{idx}/{len(CARDS)}] ✓ Salvo: {png_path} ({card['speaker']}: {card['title']})")
+        print(f"[{idx}/{len(CARDS)}] ✓ Salvo: {png_path.name} ({card['speaker']})")
     print(f"\n==> Concluído com sucesso! Imagens prontas em: {OUTPUT_DIR}")
 
 
